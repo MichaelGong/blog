@@ -41,7 +41,9 @@
 
 # Git忽略规则及.gitignore规则不生效的解决办法
  项目开发中有时候会出现在开发过程中需要ignore掉的文件，这个时候，只在.gitignore中添加对应的文件是没有效果的，这是因为.gitignore只能忽略原来没有被track的文件，如果这个文件之前已经没写入了版本管理中，那么ingore是无效的，解决方法是把本地缓存删除，然后提交：
- > git rm -r --cached .
- > git add .
- > git commit -m "update .gitignore"
- 
+ >  git rm -r --cached .
+ > 
+ >  git add .
+ > 
+ >  git commit -m "update .gitignore"
+
