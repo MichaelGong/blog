@@ -1,0 +1,39 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true,
+    "amd": true,
+    "commonjs": true
+  },
+  "rules": {
+    "comma-dangle": [2, "never"],
+    "no-param-reassign": [2, { "props": false }],
+    "prefer-const": 0,
+    "no-var": 0,
+    "prefer-arrow-callback": 0,
+    "func-names": 0,
+    "space-before-function-paren": [2, "never"],
+    "prefer-template": 0,
+    "no-console": 0,
+    "object-shorthand": 0,
+    "new-cap": 0,
+    "react/prop-types":2,
+    "jsx-boolean-value":0,
+    "react/prefer-stateless-function": 0
+  },
+  "plugins": [
+    "react"
+  ],
+  "globals": {
+    "define": true,                          
+    "require": true,                         
+    "previewOutCall": true,
+    "setLocalStorageLogin": true,
+    "arrowFunctions": true,  
+    "destructuring": true,
+    "restParams": true,  
+    "experimentalObjectRestSpread": true  
+  },
+  "parser": "babel-eslint"
+}

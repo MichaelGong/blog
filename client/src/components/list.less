@@ -1,0 +1,67 @@
+@import "../css/global.less";
+.list-fluid {
+	width: 70%;
+	max-width: 800px;
+	margin: auto;
+	.list-header {
+		border-bottom: 2px solid #d9d9d9;
+	}
+	.list-article {
+		// padding-left: 35px;
+		margin-top: 15px;
+		&>li {
+			position: relative;
+	    width: 100%;
+	    padding-left: 5px;
+	    padding-right: 5px;
+	    padding-bottom: 15px;
+	    margin-bottom: 15px;
+	    border-bottom: 1px dashed #d9d9d9;
+	    line-height: 20px;
+	    .clearfix();
+	    &>div {
+				width: 100%;
+	    }
+	    .list-top {
+	    	font-size: @g-text-sm;
+	    	margin: 8px 0;
+	    	color: #555;
+	    }
+	    .list-title {
+	    	font-size: @g-text-md;
+	    	margin-bottom: 10px;
+	    	line-height: 1.5;
+	    	font-weight: bold;
+	    	&>a {
+	    		color:#555;
+	    		font-size: inherit;
+	    	}
+	    	&>a:hover {
+	    		color:#000;
+	    	}
+	    }
+	    .list-footer {
+	    	font-size: @g-text-sm;
+	    	color: #999999;
+	    	&-left {
+	    		margin-left: 10px;
+	    	}
+	    }
+		}
+		&.have-img >li {
+			.wrap-img {
+				float: right;
+				display: block;
+				width: 100px;
+				height: 100px;
+				border-radius: 4px;
+				border: 1px solid #eeeeee;
+				background: url(http://upload-images.jianshu.io/upload_images/2044721-8227c9a352bf3c58.jpg?imageMogr2/auto-orient/strip%7CimageView2/1/w/300/h/300) no-repeat;
+				background-size: cover;
+			}
+			&>div {
+				padding-right: 120px;
+			}
+		}
+	}
+}

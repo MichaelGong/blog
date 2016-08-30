@@ -1,0 +1,97 @@
+@import "./global.less";
+@import url(http://fonts.useso.com/css?family=Quicksand|Source+Code+Pro);
+@import url(http://fonts.useso.com/css?family=Ubuntu+Mono:400,700,400italic);
+// 'Ubuntu Mono', 'Droid Serif',
+*, ::after, ::before {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	// font-family: 'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif;
+  font-family: 'Quicksand','Source Code Pro', monospace, "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "WenQuanYi Micro Hei", "Microsoft Yahei", sans-serif;
+	font-size: @g-text;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+	padding-left: @nav-width;
+  background: #ffffff;
+  -webkit-text-size-adjust: 100%;
+}
+a {
+	cursor: pointer;
+	text-decoration: none;
+}
+ul {
+	list-style: none;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 10px 0;
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 20px;
+  color: inherit;
+  text-rendering: optimizelegibility;
+}
+
+code *, pre * {
+  font-family: 'Source Code Pro', monospace, 'Ubuntu Mono', 'Droid Serif' !important;
+}
+::selection {
+  background: #48bb28;
+  color: #fff;
+}
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: #aaa;
+}
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+.markdown-body {
+  font-family: 'Quicksand','Roboto',"Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "WenQuanYi Micro Hei", "Microsoft Yahei", sans-serif;
+}
+.display {
+	&.block{
+		display: block;
+	}
+	&.inline {
+		display: inline;
+	}
+	&.inline-block {
+		display: inline-block;
+	}
+}
+.tags {
+	margin-bottom: -5px;
+	padding: 10px;
+	.tag {
+    margin-right: 5px;
+		display: inline-block;
+    border: 1px solid #eee;
+    padding: 0 10px;
+    border-radius: @g-text;
+    color: #eee;
+    padding: 5px 10px;
+    font-size: @g-text-sm;
+    text-decoration: none;
+    margin-bottom: 6px;
+	}
+	&.dark .tag {
+		border-color: #d9d9d9;
+    color: #555;
+	}
+	.tag:hover,
+  .tag.active {
+		border: 1px solid #03a9f3;
+		color: #03a9f3;
+	}
+	.tags-title {
+		font-size:@g-text;
+		font-weight: bold;
+		color:#eee;
+		margin-bottom: 10px;
+	}
+}

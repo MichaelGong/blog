@@ -1,0 +1,41 @@
+var dbUtil = require('./dbUtil');
+var objectId = require('mongodb').objectId;
+var collectionName = 'tag';
+
+var Tags = {
+  // 获取所有标签
+  getAll: function(cb) {
+    dbUtil(collectionName).then((obj) => {
+      obj.collection.find({}).toArray().
+      then((tags) => {
+        obj.db.close();
+        cb(null, tags);
+      }).
+      catch(cb);
+    }).catch(cb);
+  },
+  // 删除标签
+  deleteTag: function(id, cb) {
+    dbUtil(collectionName).then(obj => {
+      obj.collection.remove({
+        _id: objectId(id)
+      }).then(() => {
+        obj.db.close();
+        cb(null);
+      }).catch(cb);
+    }).catch(cb);
+  },
+  // 添加标签
+  addTag: function(name, cb) {
+    dbUtil(collectionName).then(obj => {
+      obj.collection.insert({
+        name: name
+      }).then(() => {
+        obj.db.close();
+        cb(null);
+      }).catch(cb);
+    }).catch(cb);
+  }
+};
+
+module.exports = Tags;

@@ -1,0 +1,117 @@
+@import "../css/global.less";
+
+.article {
+  @tocwidth: 300px;
+  width: @article-width;
+  margin: auto;
+  padding: 10px 0;
+  // font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+
+  .title {
+    word-break: break-all;
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 1.5;
+    color: #555;
+    margin: 10px 0;
+  }
+  .meta-top {
+    margin: 20px 0;
+    span {
+      position: relative;
+      top: 1px;
+      margin-right: 10px;
+      font-size: 12px;
+      color: #999999;
+    }
+  }
+  &.showTOC &-container {
+    transform: translate(-@tocwidth/2);
+  }
+  &-content {
+    color: #555;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.7;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  &-sideBar {
+    width: @tocwidth;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    overflow: hidden;
+    background: #fff;
+    z-index: 100;
+    border-left: 1px solid #ddd;
+    &:hover {
+      overflow: auto;
+    }
+    &-title {
+      padding-left: 28px;
+      margin-bottom: 0;
+      font-size: 15px;
+    }
+  }
+  &-sideBar-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 40px;
+    width: 25px;
+    height: 25px;
+    padding: 6px;
+    background: #000;
+    z-index: 400;
+    cursor: pointer;
+
+    &-line {
+      width: 100%;
+      height: 2px;
+      display: block;
+      background: #87daff;
+      margin-bottom: 3px;
+      transition: all .3s linear;
+      position: relative;
+    }
+    &.close &-line:first-child {
+      transform: rotate(-45deg);
+      width: 100%;
+      top: 5px;
+      left: 0;
+    }
+    &.close &-line:nth-child(2) {
+      display: none;
+    }
+    &.close &-line:last-child {
+      transform: rotate(45deg);
+      width: 100%;
+      top: -5px;
+      left: 0;
+    }
+    &-line:last-child {
+      margin-bottom: 0px;
+    }
+    &:hover &-line:first-child {
+      transform: rotate(-45deg);
+      top: 2px;
+      left: -1px;
+      width: 70%;
+    }
+    &:hover &-line:last-child {
+      transform: rotate(45deg);
+      top: -2px;
+      left: -1px;
+      position: relative;
+      width: 70%;
+    }
+  }
+  .editormd-preview-container, .editormd-html-preview {
+    padding-left: 0 !important;
+    padding-top: 10px;
+    ul {
+      list-style: inherit;
+    } 
+  }
+}

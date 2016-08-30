@@ -1,0 +1,34 @@
+/**
+ * 全局样式
+ */
+// 颜色
+@g-color-navbar: rgba(42,42,42,1); // navbar背景色 #353c48
+
+
+// 字体
+@g-text: 14px;
+@g-text-sm: 12px;
+@g-text-md: 18px;
+@g-text-lg: 24px;
+
+// 导航的宽度
+@nav-width: 120px;
+@nav-logo-width: 90px;
+
+// 文章页宽度
+@article-width: 640px;
+@article-width-sm: 100%;
+
+.border-radius(@radius: 100%) {
+	border-radius: @radius;
+}
+.clearfix() {
+  &:before,
+  &:after {
+    content: " "; // 1
+    display: table; // 2
+  }
+  &:after {
+    clear: both;
+  }
+}

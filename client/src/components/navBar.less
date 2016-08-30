@@ -1,0 +1,70 @@
+@import "../css/global.less";
+
+.navbar {
+	background: @g-color-navbar;
+	width: @nav-width;
+	&.navbar-bg {
+		background: url(../img/bg1.jpg) no-repeat;
+		// background: url(http://hbimg.b0.upaiyun.com/9fe014a1ff87ee1658d7aad288d58583575365e960575-ZqP7QE_fw658) no-repeat;
+		background-size: cover;
+	}
+	&.navbar-fixed {
+		position: fixed;
+		left:0;
+		top:0;
+		bottom:0;
+	}
+	.navbar-logo{
+		width: @nav-logo-width;
+		height: @nav-logo-width;
+		background: url(../img/logo.jpg) no-repeat;
+		background-size: cover;
+		display: block;
+		margin: 50px auto 10px;
+		cursor: pointer;
+		overflow: hidden;
+		.border-radius();
+	}
+	.navbar-motto{
+		font-size: @g-text;
+		color: #eee;
+		text-align: center;
+		line-height: 1.6;
+	}
+	.navbar-bottom{
+		position: absolute;
+		bottom: 10px;
+		width: 100%;
+	}
+	.navbar-category{
+		width: 100%;
+		margin: auto;
+		margin-top: 20px;
+		&>li {
+			width: 100%;
+			height: 45px;
+			line-height: 45px;
+			text-align: center;
+			display: inline-block;
+			background: rgba(0,0,0,.2);
+			border-bottom: 1px solid rgba(255,255,255,.2);
+			a{
+				height: 100%;
+				display: block;
+				color: #fff;
+				font-size: 14px;
+				font-weight: 500;
+				// padding-left:50px;
+				transition: all .5s;
+				position: relative;
+				&:hover {
+					// transform: scale(1.2);
+					background: rgba(0, 0, 0, .3);
+				}
+			}
+			&.active a {
+				background: rgba(0,0,0, .3);
+			}
+		}
+	}
+}
