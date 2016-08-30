@@ -1,6 +1,29 @@
 @import "./global.less";
-@import url(http://fonts.useso.com/css?family=Quicksand|Source+Code+Pro);
-@import url(http://fonts.useso.com/css?family=Ubuntu+Mono:400,700,400italic);
+/* latin */
+@font-face {
+  font-family: 'Quicksand';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Quicksand Regular'), local('Quicksand-Regular'), url(http://ocppy2pfa.bkt.clouddn.com/quicksand.font.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(http://ocppy2pfa.bkt.clouddn.com/sourcecodepro.font.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(http://ocppy2pfa.bkt.clouddn.com/sourcecodepro2.font.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
 // 'Ubuntu Mono', 'Droid Serif',
 *, ::after, ::before {
 	margin: 0;
@@ -15,6 +38,7 @@ body {
 	padding-left: @nav-width;
   background: #ffffff;
   -webkit-text-size-adjust: 100%;
+  text-rendering: optimizelegibility;
 }
 a {
 	cursor: pointer;
@@ -33,7 +57,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 code *, pre * {
-  font-family: 'Source Code Pro', monospace, 'Ubuntu Mono', 'Droid Serif' !important;
+  font-family: 'Source Code Pro', monospace, 'Ubuntu Mono', 'Droid Serif', 'Quicksand', "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "WenQuanYi Micro Hei", "Microsoft Yahei", sans-serif !important;
 }
 ::selection {
   background: #48bb28;
@@ -94,4 +118,13 @@ code *, pre * {
 		color:#eee;
 		margin-bottom: 10px;
 	}
+}
+
+@media screen and (max-width: 640px) {
+  .navbar{
+    display: none;
+  }
+  body {
+    padding: 10px; 
+  }
 }

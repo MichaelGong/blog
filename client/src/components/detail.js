@@ -9,9 +9,21 @@ import 'editormd.css';
 import './detail.less';
 
 class Detail extends Component {
+  constructor() {
+    super();
+    this.state = {
+      showTOC: true
+    };
+    this.toggleTOC = this.toggleTOC.bind(this);
+  }
   componentWillMount() {
     const { dispatch, params } = this.props;
     dispatch(getArticleById(params.articleid));
+  }
+  toggleTOC() {
+    this.setState({
+      showTOC: !this.state.showTOC
+    });
   }
   render() {
     const { articleDetail } = this.props;
@@ -29,7 +41,7 @@ class Detail extends Component {
     }
 
     return (
-      <div className="article showTOC">
+      <div className={this.state.showTOC ? 'article showTOC' : 'article hideTOC'}>
         <div className="article-container">
           <h1 className="title">{articleDetail.title}</h1>
           <div className="meta-top">
@@ -48,7 +60,11 @@ class Detail extends Component {
           <div id="article-sideBar-content" className="markdown-body editormd-preview-container">
           </div>
         </div>
-        <div className="article-sideBar-toggle close">
+        <div
+          className={this.state.showTOC ?
+            'article-sideBar-toggle close' : 'article-sideBar-toggle show'}
+          onClick={this.toggleTOC}
+        >
           <span className="article-sideBar-toggle-line"></span>
           <span className="article-sideBar-toggle-line"></span>
           <span className="article-sideBar-toggle-line"></span>
