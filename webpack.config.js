@@ -1,3 +1,4 @@
+/* eslint-disable */
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -13,8 +14,7 @@ var port = 3001;
 module.exports = {
   port: port,
   entry: {
-    index: isDev ? ['./client/src/index.js', 'webpack-hot-middleware/client']
-        : ['./client/src/index.js']
+    index: isDev ? ['./client/src/index.js', 'webpack-hot-middleware/client'] : ['./client/src/index.js']
   },
   output: {
     path: path.join(__dirname, 'client', 'dist'),
