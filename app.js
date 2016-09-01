@@ -36,7 +36,7 @@ if (isDev) {
     stats: {
       colors: true
     },
-    quiet: true
+    // quiet: true
   }));
 
   app.use(webpackHotMiddleware(compiler));
