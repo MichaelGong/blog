@@ -16,6 +16,7 @@ var category = require('./routes/category');
 var info = require('./routes/info');
 var tags = require('./routes/tags');
 var article = require('./routes/article');
+var uploadfile = require('./routes/uploadfile');
 var server;
 
 var NODE_ENV = process.env.NODE_ENV || 'development';
@@ -64,7 +65,7 @@ app.use('/category', category);
 app.use('/info', info);
 app.use('/tags', tags);
 app.use('/article', article);
-
+app.use('/uploadfile', uploadfile);
 // 404
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

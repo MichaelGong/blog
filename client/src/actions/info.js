@@ -9,3 +9,14 @@ export function info() {
       });
   };
 }
+
+// 获取七牛uptoken
+export function getUpToken() {
+  return dispatch => {
+    dispatch({ type: 'BEGIN_GET_UPTOKEN' });
+    return fetch(apis.getUpToken).then(response => response.json()).
+      then(json => {
+        dispatch({ type: 'GET_UPTOKEN', data: json.data });
+      });
+  };
+}
