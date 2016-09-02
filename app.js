@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var ejs = require('ejs');
+var fs = require('fs');
 var favicon = require('serve-favicon');
 // var settings = require('./settings');
 // var session = require('express-session');
@@ -12,11 +13,7 @@ var DashboardPlugin = require('webpack-dashboard/plugin');
 
 var loggerFunc = require('./logger');
 var routes = require('./routes/index');
-var category = require('./routes/category');
-var info = require('./routes/info');
-var tags = require('./routes/tags');
-var article = require('./routes/article');
-var uploadfile = require('./routes/uploadfile');
+
 var server;
 
 var NODE_ENV = process.env.NODE_ENV || 'development';
@@ -61,11 +58,19 @@ app.use('/client/dist', express.static(path.join(__dirname, 'client/dist')));
 // app.use('/', express.static(path.join(__dirname, '/')));
 
 app.use('/view', routes);
-app.use('/category', category);
-app.use('/info', info);
-app.use('/tags', tags);
-app.use('/article', article);
-app.use('/uploadfile', uploadfile);
+
+fs.readdirSync('./routes').forEach(function (filename) {
+  var name;
+  if (path.extname(filename) !== '.js') {
+    return;
+  }
+  name = path.basename(filename, '.js');
+  if (name === 'index') {
+    return;
+  }
+  /* eslint global-require: 0 */
+  app.use(`/${name}`, require(`./routes/${name}`));
+});
 // 404
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

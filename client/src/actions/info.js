@@ -10,6 +10,25 @@ export function info() {
   };
 }
 
+// 更新基本信息
+export function updateInfo(data) {
+  return dispatch => {
+    dispatch({ type: 'BEGIN_UPDATE_INFO' });
+    return fetch(apis.updateInfo, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(response => response.json()).
+      then(json => {
+        dispatch({ type: 'UPDATE_INFO', data: json.data });
+      });
+  };
+}
+
+
 // 获取七牛uptoken
 export function getUpToken() {
   return dispatch => {
@@ -20,3 +39,4 @@ export function getUpToken() {
       });
   };
 }
+

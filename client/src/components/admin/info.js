@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, message, Form, Input, Upload, Icon } from 'antd';
 import { connect } from 'react-redux';
-import { getUpToken } from '../../actions/info';
+import { getUpToken, updateInfo } from '../../actions/info';
 
 const createForm = Form.create;
 const FormItem = Form.Item;
@@ -17,6 +17,32 @@ class Info extends Component {
   componentWillMount() {
     const { dispatch } = this.props;
     dispatch(getUpToken());
+  }
+  handleSubmit(e) {
+    var me = this;
+    e.preventDefault();
+    this.props.form.validateFields((errors, values) => {
+      var data = {};
+      if (errors) {
+        console.log(errors);
+        return;
+      }
+      console.log(errors, me.state.fileList);
+      if (me.state.fileList.length !== 0) {
+        if (me.state.fileList[0].url) {
+          data.headpic = me.state.fileList[0].url;
+        }
+      }
+      if (!errors) {
+        data.signature = values.signature;
+      }
+      data.id = '57a9567e8cca2b1fc8d789bb';
+      const { dispatch } = this.props;
+      dispatch(updateInfo(data));
+    });
+  }
+  handleCancel() {
+
   }
   render() {
     var me = this;
@@ -42,7 +68,6 @@ class Info extends Component {
         token: uptoken
       },
       onChange: function(info) {
-        console.log(info);
         me.setState({
           fileList: info.fileList.slice(-1).map(file => {
             if (file.response) {
@@ -81,7 +106,7 @@ class Info extends Component {
           label="个人头像"
         >
           <div>
-            <div style={{ height: 180 }}>
+            <div>
               <Dragger {...uploadProps} fileList={this.state.fileList}>
                 <p className="ant-upload-drag-icon">
                   <Icon type="inbox" />
@@ -93,9 +118,9 @@ class Info extends Component {
           </div>
         </FormItem>
         <FormItem wrapperCol={{ span: 12, offset: 4 }}>
-          <Button type="primary" onClick={this.handleSubmit}>确定</Button>
+          <Button type="primary" onClick={(e) => this.handleSubmit(e)}>确定</Button>
           &nbsp;&nbsp;&nbsp;
-          <Button type="ghost" onClick={this.handleReset}>取消</Button>
+          <Button type="ghost" onClick={(e) => this.handleCancel(e)}>取消</Button>
         </FormItem>
       </Form>
     );

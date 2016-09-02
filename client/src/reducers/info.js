@@ -2,6 +2,8 @@ const GET_INFO = 'GET_INFO';
 const BEGIN_GET_INFO = 'BEGIN_GET_INFO';
 const GET_UPTOKEN = 'GET_UPTOKEN';
 const BEGIN_GET_UPTOKEN = 'BEGIN_GET_UPTOKEN';
+const UPDATE_INFO = 'UPDATE_INFO';
+const BEGIN_UPDATE_INFO = 'BEGIN_UPDATE_INFO';
 
 export default function(state = { info: {} }, action = {}) {
   switch (action.type) {
@@ -26,6 +28,18 @@ export default function(state = { info: {} }, action = {}) {
       return {
         ...state,
         uptoken: action.data.uptoken
+      };
+    }
+    case UPDATE_INFO: {
+      return {
+        ...state,
+        updateInfo: action.data
+      };
+    }
+    case BEGIN_UPDATE_INFO: {
+      return {
+        ...state,
+        fetching: true
       };
     }
     default:
