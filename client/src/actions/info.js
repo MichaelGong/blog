@@ -23,11 +23,15 @@ export function updateInfo(data) {
       body: JSON.stringify(data)
     }).then(response => response.json()).
       then(json => {
-        dispatch({ type: 'UPDATE_INFO', data: json.data });
+        dispatch({ type: 'UPDATE_INFO', data: json });
       });
   };
 }
 
+// 重置updateInfo
+export function resetUpdateInfo() {
+  return dispatch => dispatch({ type: 'RESET_UPDATE_INFO' });
+}
 
 // 获取七牛uptoken
 export function getUpToken() {

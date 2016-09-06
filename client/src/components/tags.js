@@ -27,7 +27,7 @@ class Tags extends Component {
       let id = item[idTmp];
       return (
         <Link
-          to={`/list/${categoryid}/${id}`}
+          to={`/view/list/${categoryid}/${id}`}
           key={`tags-${id}`}
           title={item.name}
           className={id === tagid ? 'tag active' : 'tag'}

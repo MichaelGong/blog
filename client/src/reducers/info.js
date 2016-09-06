@@ -33,7 +33,15 @@ export default function(state = { info: {} }, action = {}) {
     case UPDATE_INFO: {
       return {
         ...state,
+        fetching: false,
+        isupdateinfo: true,
         updateInfo: action.data
+      };
+    }
+    case 'RESET_UPDATE_INFO': {
+      return {
+        ...state,
+        isupdateinfo: false
       };
     }
     case BEGIN_UPDATE_INFO: {

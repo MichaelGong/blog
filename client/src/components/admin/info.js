@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, message, Form, Input, Upload, Icon } from 'antd';
 import { connect } from 'react-redux';
-import { getUpToken, updateInfo } from '../../actions/info';
+import { info, getUpToken, updateInfo, resetUpdateInfo } from '../../actions/info';
 
 const createForm = Form.create;
 const FormItem = Form.Item;
@@ -17,17 +17,31 @@ class Info extends Component {
   componentWillMount() {
     const { dispatch } = this.props;
     dispatch(getUpToken());
+    dispatch(info());
+  }
+  componentDidUpdate() {
+    var updateInfoState = this.props.updateInfo;
+    var isupdateInfo = this.props.isupdateinfo;
+    const { dispatch } = this.props;
+    if (isupdateInfo) {
+      if (+updateInfoState.code === 200) {
+        message.success('更新成功！');
+      } else {
+        message.error(updateInfoState.msg);
+      }
+      dispatch(resetUpdateInfo());
+    }
   }
   handleSubmit(e) {
     var me = this;
+    var id = '_id';
+    var infoId = this.props.info[id];
     e.preventDefault();
     this.props.form.validateFields((errors, values) => {
       var data = {};
       if (errors) {
-        console.log(errors);
         return;
       }
-      console.log(errors, me.state.fileList);
       if (me.state.fileList.length !== 0) {
         if (me.state.fileList[0].url) {
           data.headpic = me.state.fileList[0].url;
@@ -36,17 +50,14 @@ class Info extends Component {
       if (!errors) {
         data.signature = values.signature;
       }
-      data.id = '57a9567e8cca2b1fc8d789bb';
+      data.id = infoId;
       const { dispatch } = this.props;
       dispatch(updateInfo(data));
     });
   }
-  handleCancel() {
-
-  }
   render() {
     var me = this;
-    const { uptoken } = this.props;
+    const { uptoken, info } = this.props;
     const { getFieldProps, getFieldError } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -57,7 +68,8 @@ class Info extends Component {
         required: true,
         min: 1,
         message: '请输入个性签名'
-      }]
+      }],
+      initialValue: info.oneWord
     });
     const uploadProps = {
       name: 'file',
@@ -67,9 +79,9 @@ class Info extends Component {
       data: {
         token: uptoken
       },
-      onChange: function(info) {
+      onChange: function(infos) {
         me.setState({
-          fileList: info.fileList.slice(-1).map(file => {
+          fileList: infos.fileList.slice(-1).map(file => {
             if (file.response) {
               file.url = 'http://ocppy2pfa.bkt.clouddn.com/' + file.response.hash;
             }
@@ -81,13 +93,13 @@ class Info extends Component {
             return true;
           })
         });
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
+        if (infos.file.status !== 'uploading') {
+          console.log(infos.file, infos.fileList);
         }
-        if (info.file.status === 'done') {
-          message.success(`${info.file.name} 上传成功。`);
-        } else if (info.file.status === 'error') {
-          message.error(`${info.file.name} 上传失败。`);
+        if (infos.file.status === 'done') {
+          message.success(`${infos.file.name} 上传成功。`);
+        } else if (infos.file.status === 'error') {
+          message.error(`${infos.file.name} 上传失败。`);
         }
       }
     };
@@ -108,7 +120,7 @@ class Info extends Component {
           <div>
             <div>
               <Dragger {...uploadProps} fileList={this.state.fileList}>
-                <p className="ant-upload-drag-icon">
+                <p className="ant-upload-drag-icon" style={{ marginTop: 15 }}>
                   <Icon type="inbox" />
                 </p>
                 <p className="ant-upload-text">点击或将文件拖拽到此区域上传</p>
@@ -129,12 +141,18 @@ class Info extends Component {
 Info.propTypes = {
   form: PropTypes.object.isRequired,
   dispatch: PropTypes.func,
-  uptoken: PropTypes.string
+  uptoken: PropTypes.string,
+  info: PropTypes.object,
+  updateInfo: PropTypes.object,
+  isupdateinfo: PropTypes.bool
 };
 
 function mapToState(state) {
   return {
-    uptoken: state.info.uptoken
+    uptoken: state.info.uptoken,
+    info: state.info.info,
+    updateInfo: state.info.updateInfo,
+    isupdateinfo: state.info.isupdateinfo
   };
 }
 export default connect(mapToState)(createForm()(Info));

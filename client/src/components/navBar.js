@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import { category } from '../actions/navBar';
+import { categoryAction } from '../actions/navBar';
 import { info } from '../actions/info';
 import Tags from './tags';
 import './navBar.less';
@@ -9,7 +9,7 @@ import './navBar.less';
 class NavBar extends Component {
   componentWillMount() {
     const { dispatch } = this.props;
-    dispatch(category());
+    dispatch(categoryAction());
     dispatch(info());
   }
   render() {
