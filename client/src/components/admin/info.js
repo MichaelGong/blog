@@ -1,7 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, message, Form, Input, Upload, Icon } from 'antd';
 import { connect } from 'react-redux';
-import { info, getUpToken, updateInfo, resetUpdateInfo, setFileListAction } from '../../actions/info';
+import {
+  info,
+  getUpToken,
+  updateInfo,
+  resetUpdateInfo,
+  setFileListAction
+} from '../../actions/info';
 
 const createForm = Form.create;
 const FormItem = Form.Item;

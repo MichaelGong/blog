@@ -1,10 +1,11 @@
+// 时间日期
 export function getTime(timeStamp) {
   let date = new Date(timeStamp);
 
   return date.getFullYear() + '-' + parseInt(date.getMonth() + 1, 10) + '-' + date.getDate()
     + ' ' + date.getHours() + ':' + date.getMinutes();
 }
-
+// 距离现在多久
 export function getTimeLeft(timeStamp) {
   let date = new Date().getTime() - timeStamp;
   let dateTmp = '';
@@ -22,4 +23,8 @@ export function getTimeLeft(timeStamp) {
     dateTmp = '太久太久了';
   }
   return dateTmp;
+}
+// 判断是否是数组
+export function isArray(obj) {
+  return Object.prototype.toString.call(obj) === '[object Array]';
 }

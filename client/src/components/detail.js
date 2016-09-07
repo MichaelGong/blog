@@ -29,7 +29,9 @@ class Detail extends Component {
     const { articleDetail } = this.props;
     this.content = articleDetail.content;
 
-    if (this.props.articleDetail.content && $('#markedDOM').length > 0) {
+    if (this.props.articleDetail.content
+      && $('#markedDOM').length > 0
+      && $('#markedDOM').children().length === 0) {
       editormd().markdownToHTML('markedDOM', {
         markdown: this.props.articleDetail.content, // + "\r\n" + $("#append-test").text(),
         // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
