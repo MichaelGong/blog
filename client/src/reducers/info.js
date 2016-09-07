@@ -10,12 +10,20 @@ export default function(state = { info: {} }, action = {}) {
     case GET_INFO: {
       return {
         ...state,
-        info: action.data
+        info: action.data,
+        fileList: [{
+          uid: -1,
+          name: action.data.headpic,
+          status: 'done',
+          url: action.data.headpic,
+          thumbUrl: action.data.headpic
+        }]
       };
     }
     case BEGIN_GET_INFO: {
       return Object.assign({}, state, {
-        fetching: true
+        fetching: true,
+        fileList: []
       });
     }
     case BEGIN_GET_UPTOKEN: {
@@ -43,6 +51,12 @@ export default function(state = { info: {} }, action = {}) {
         ...state,
         isupdateinfo: false
       };
+    }
+    case 'SET_FILE_LIST': {
+      return {
+        ...state,
+        fileList: action.data
+      }
     }
     case BEGIN_UPDATE_INFO: {
       return {

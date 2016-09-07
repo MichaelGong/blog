@@ -43,4 +43,7 @@ export function getUpToken() {
       });
   };
 }
-
+// 设置filelist
+export function setFileListAction(fileListArr) {
+  return dispatch => dispatch({ type: 'SET_FILE_LIST', data: fileListArr });
+}

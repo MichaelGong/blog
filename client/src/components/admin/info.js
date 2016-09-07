@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, message, Form, Input, Upload, Icon } from 'antd';
 import { connect } from 'react-redux';
-import { info, getUpToken, updateInfo, resetUpdateInfo } from '../../actions/info';
+import { info, getUpToken, updateInfo, resetUpdateInfo, setFileListAction } from '../../actions/info';
 
 const createForm = Form.create;
 const FormItem = Form.Item;
@@ -32,19 +32,20 @@ class Info extends Component {
       dispatch(resetUpdateInfo());
     }
   }
+  // 提交基本信息
   handleSubmit(e) {
-    var me = this;
     var id = '_id';
-    var infoId = this.props.info[id];
+    var infoId = this.props.infoData[id];
+    const { fileList } = this.props;
     e.preventDefault();
     this.props.form.validateFields((errors, values) => {
       var data = {};
       if (errors) {
         return;
       }
-      if (me.state.fileList.length !== 0) {
-        if (me.state.fileList[0].url) {
-          data.headpic = me.state.fileList[0].url;
+      if (fileList.length !== 0) {
+        if (fileList[0].url) {
+          data.headpic = fileList[0].url;
         }
       }
       if (!errors) {
@@ -55,9 +56,42 @@ class Info extends Component {
       dispatch(updateInfo(data));
     });
   }
+  createUploadProps() {
+    const { dispatch, uptoken } = this.props;
+    return {
+      name: 'file',
+      showUploadList: true,
+      action: 'http://up.qiniu.com',
+      listType: 'picture',
+      data: {
+        token: uptoken
+      },
+      onChange: function(infos) {
+        let filelistTemp = infos.fileList.slice(-1).map(file => {
+          if (file.response) {
+            file.url = 'http://ocppy2pfa.bkt.clouddn.com/' + file.response.hash;
+          }
+          return file;
+        }).filter(file => {
+          if (file.response) {
+            return file.status === 'done';
+          }
+          return true;
+        });
+        dispatch(setFileListAction(filelistTemp));
+        if (infos.file.status !== 'uploading') {
+          // console.log(infos.file, infos.fileList);
+        }
+        if (infos.file.status === 'done') {
+          message.success(`${infos.file.name} 上传成功。`);
+        } else if (infos.file.status === 'error') {
+          message.error(`${infos.file.name} 上传失败。`);
+        }
+      }
+    };
+  }
   render() {
-    var me = this;
-    const { uptoken, info } = this.props;
+    const { infoData, fileList } = this.props;
     const { getFieldProps, getFieldError } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -69,40 +103,9 @@ class Info extends Component {
         min: 1,
         message: '请输入个性签名'
       }],
-      initialValue: info.oneWord
+      initialValue: infoData.oneWord
     });
-    const uploadProps = {
-      name: 'file',
-      showUploadList: true,
-      action: 'http://up.qiniu.com',
-      listType: 'picture',
-      data: {
-        token: uptoken
-      },
-      onChange: function(infos) {
-        me.setState({
-          fileList: infos.fileList.slice(-1).map(file => {
-            if (file.response) {
-              file.url = 'http://ocppy2pfa.bkt.clouddn.com/' + file.response.hash;
-            }
-            return file;
-          }).filter(file => {
-            if (file.response) {
-              return file.status === 'done';
-            }
-            return true;
-          })
-        });
-        if (infos.file.status !== 'uploading') {
-          console.log(infos.file, infos.fileList);
-        }
-        if (infos.file.status === 'done') {
-          message.success(`${infos.file.name} 上传成功。`);
-        } else if (infos.file.status === 'error') {
-          message.error(`${infos.file.name} 上传失败。`);
-        }
-      }
-    };
+    const uploadProps = this.createUploadProps();
     return (
       <Form horizontal>
         <FormItem
@@ -119,7 +122,7 @@ class Info extends Component {
         >
           <div>
             <div>
-              <Dragger {...uploadProps} fileList={this.state.fileList}>
+              <Dragger {...uploadProps} fileList={fileList}>
                 <p className="ant-upload-drag-icon" style={{ marginTop: 15 }}>
                   <Icon type="inbox" />
                 </p>
@@ -142,17 +145,19 @@ Info.propTypes = {
   form: PropTypes.object.isRequired,
   dispatch: PropTypes.func,
   uptoken: PropTypes.string,
-  info: PropTypes.object,
+  infoData: PropTypes.object,
   updateInfo: PropTypes.object,
-  isupdateinfo: PropTypes.bool
+  isupdateinfo: PropTypes.bool,
+  fileList: PropTypes.array
 };
 
 function mapToState(state) {
   return {
     uptoken: state.info.uptoken,
-    info: state.info.info,
+    infoData: state.info.info,
     updateInfo: state.info.updateInfo,
-    isupdateinfo: state.info.isupdateinfo
+    isupdateinfo: state.info.isupdateinfo,
+    fileList: state.info.fileList
   };
 }
 export default connect(mapToState)(createForm()(Info));

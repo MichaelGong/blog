@@ -9,20 +9,25 @@ class MenuDOM extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      current: 'info'
+      current: 'info',
+      menuKeys: ['info', 'category', 'tag', 'article', 'write']
     };
-    console.log(this.props);
   }
   componentWillMount() {
+    // 设置左侧menu item激活
     const { location } = this.props;
     const pathName = location.pathname;
-    let pathNameArr = pathName.split('/');
+    let pathNameArr = pathName.substr(1).split('/');
+    let current = pathNameArr[pathNameArr.length - 1];
+    // 如果左侧的包含就显示某一个menu item，默认是info
     this.setState({
-      current: pathNameArr[pathNameArr.length - 1]
+      current: this.state.menuKeys.indexOf(current) > -1 ? current : 'info'
     });
   }
+  // 点击菜单
   handleClick(e) {
-    if (!e.key) return;
+    console.log(e);
+    if (this.state.menuKeys.indexOf(e.key) < 0) return; // 头像点击没有反应
     this.setState({
       current: e.key
     });
@@ -39,7 +44,7 @@ class MenuDOM extends Component {
             style={{ width: 120, height: '100%', paddingTop: 20 }}
             mode="inline"
           >
-            <Menu.Item style={{ height: '100px' }}>
+            <Menu.Item style={{ height: 100 }}>
               <a className="navbar-logo" style={{ marginTop: '20px' }}></a>
             </Menu.Item>
             <Menu.Item key="info">
