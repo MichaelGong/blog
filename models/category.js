@@ -21,9 +21,7 @@ Category.get = function(cb) {
 Category.prototype.update = function(id, cb) {
   var self = this;
   var categoryTemp = {};
-  var field = ['name', 'pid'];
-
-  if (!id) return cb({ message: '类别id不能为空' });
+  var field = ['name', 'pid', 'desc'];
   field.forEach(function(key) {
     if (self[key]) {
       categoryTemp[key] = self[key];

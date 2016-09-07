@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var objectId = require('mongodb').ObjectId;
 var Category = require('../models/category');
+var errorCheck = require('../util').errorCheck;
 // 该路由使用的中间件
 // router.use(function timeLog(req, res, next) {
 //   console.log('Time: ', new Date());
@@ -28,15 +29,19 @@ router.get('/getAll', function(req, res) {
 router.post('/update', function(req, res) {
   var category;
   if (!objectId.isValid(req.body.id)) {
-    res.json({
-      code: 400,
-      message: '类别id不合法！',
-      data: {}
-    });
+    errorCheck(res, '类别id不合法！');
+    return;
+  }
+  if (!req.body.name) {
+    errorCheck(res, '请输入类别名称');
+    return;
+  } else if (!req.body.desc) {
+    errorCheck(res, '请输入类别描述');
     return;
   }
   category = new Category({
     name: req.body.name,
+    desc: req.body.desc,
     pid: req.body.pid
   });
   category.update(req.body.id, function(err) {
