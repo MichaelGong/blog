@@ -3,6 +3,7 @@ var objectId = require('mongodb').ObjectId;
 
 function Category(category) {
   this.name = category.name; // 类别名称
+  this.desc = category.desc; // 类别描述
   this.pid = category.pid; // 父类别的id
 }
 
@@ -27,7 +28,7 @@ Category.prototype.update = function(id, cb) {
       categoryTemp[key] = self[key];
     }
   });
-
+  console.log(categoryTemp);
   return dbUtil('category').then((collection) => {
     collection.collection.update({
       _id: objectId(id)
@@ -35,7 +36,7 @@ Category.prototype.update = function(id, cb) {
       $set: categoryTemp
     }).then((err, category) => {
       collection.db.close();
-      return cb(null, category);
+      cb(null, category);
     }).catch(cb);
   }).catch(cb);
 };

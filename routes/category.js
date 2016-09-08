@@ -68,6 +68,12 @@ router.post('/add', function(req, res) {
       message: '类别名称不能为空！',
       data: null
     });
+  } else if (!req.body.desc) {
+    res.json({
+      code: 400,
+      message: '类别描述不能为空！',
+      data: null
+    });
   } else {
     Category.get(function(err, categories) {
       if (categories.filter(item => item.name === req.body.name).length > 0) {

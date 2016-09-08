@@ -16,6 +16,27 @@
       .category-item {
         font-size: 14px;
       }
+      .category-action {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        font-size: 16px;
+        padding: 10px;
+        color: #ccc;
+        & > .anticon-edit {
+          float: left;
+        }
+        & > .anticon-delete {
+          float: right;
+        }
+        & > .anticon {
+          cursor: pointer;
+        }
+        & > .anticon:hover {
+          color: #666;
+        }
+      }
     }
     
   }

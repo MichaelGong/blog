@@ -20,6 +20,19 @@ export default function(state = { tags: [], category: {} }, action = {}) {
         fetching: true
       });
     }
+    case 'BEGIN_UPDATE_CATEGORY': {
+      return {
+        ...state,
+        fetching: true
+      };
+    }
+    case 'UPDATE_CATEGORY': {
+      return {
+        ...state,
+        fetching: false,
+        updateCategory: action.data
+      }
+    }
     default:
       return state;
   }
