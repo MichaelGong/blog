@@ -28,7 +28,7 @@ Category.prototype.update = function(id, cb) {
       categoryTemp[key] = self[key];
     }
   });
-  console.log(categoryTemp);
+  categoryTemp.updateTime = new Date().getTime();
   return dbUtil('category').then((collection) => {
     collection.collection.update({
       _id: objectId(id)
@@ -48,7 +48,10 @@ Category.prototype.insert = function(cb) {
   }
   categoryTemp = {
     name: this.name,
-    pid: this.pid ? this.pid : 0
+    desc: this.desc,
+    pid: this.pid ? this.pid : 0,
+    createTime: new Date().getTime(),
+    updateTime: new Date().getTime()
   };
   return dbUtil('category').then((collection) => {
     collection.collection.insert(categoryTemp).then((err, category) => {
@@ -56,5 +59,32 @@ Category.prototype.insert = function(cb) {
       return cb(null, category);
     }).catch(cb);
   }).catch(cb);
+};
+// 删除类别
+Category.delete = function(id, cb) {
+  // 删除分类
+  dbUtil('category').then((collection) => {
+    collection.collection.remove({
+      _id: objectId(id)
+    }).then((err, data) => {
+      collection.db.close();
+      cb(null, data);
+    }).catch(cb);
+  }).catch(cb);
+
+  // 更新文章表内的categoryId
+  dbUtil('article').then((collection) => {
+    collection.collection.findAndModify({
+      _id: objectId(id)
+    }, [], {
+      $set: { categoryId: '' }
+    }, null).then((err, data) => {
+      console.log('Category.delete findAndModify err:', err, ' === data:', data);
+    }).catch(err => {
+      console.log(err);
+    });
+  }).catch(err => {
+    console.log(err);
+  });
 };
 module.exports = Category;

@@ -31,6 +31,32 @@ export default function(state = { tags: [], category: {} }, action = {}) {
         ...state,
         fetching: false,
         updateCategory: action.data
+      };
+    }
+    case 'BEGIN_ADD_CATEGORY': {
+      return {
+        ...state,
+        fetching: true
+      };
+    }
+    case 'ADD_CATEGORY': {
+      return {
+        ...state,
+        fetching: false,
+        addCategory: action.data
+      };
+    }
+    case 'BEGIN_DELETE_CATEGORY': {
+      return {
+        ...state,
+        fetching: true
+      }
+    }
+    case 'DELETE_CATEGORY': {
+      return {
+        ...state,
+        fetching: false,
+        deleteCategory: action.data
       }
     }
     default:

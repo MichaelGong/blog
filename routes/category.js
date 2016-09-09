@@ -85,6 +85,7 @@ router.post('/add', function(req, res) {
       } else {
         category = new Category({
           name: req.body.name,
+          desc: req.body.desc,
           pid: req.body.pid ? req.body.pid : 0
         });
         category.insert(function(error) {
@@ -105,5 +106,26 @@ router.post('/add', function(req, res) {
     });
   }
 });
-
+// 删除分类
+router.post('/delete', function(req, res) {
+  if (!objectId.isValid(req.body.id)) {
+    errorCheck(res, '类别id不合法！');
+    return;
+  }
+  Category.delete(req.body.id, function(err) {
+    if (err) {
+      res.json({
+        code: 400,
+        message: err.message,
+        data: err
+      });
+      return;
+    }
+    res.json({
+      code: 200,
+      message: '成功！',
+      data: {}
+    });
+  });
+});
 module.exports = router;

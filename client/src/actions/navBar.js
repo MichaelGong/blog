@@ -46,8 +46,8 @@ export function categoryUpdateAction(id, name, desc) {
     });
   };
 }
-
-export function emptyCategoryUpdate() {
+// 清空 UPDATE_CATEGORY
+export function emptyCategoryUpdateAction() {
   return dispatch => dispatch({ type: 'UPDATE_CATEGORY', data: null });
 }
 // 添加分类
@@ -74,5 +74,36 @@ export function addCategoryAction(name, desc) {
     });
   };
 }
+// 清空
+export function emptyAddCategoryAction() {
+  return dispatch => dispatch({ type: 'ADD_CATEGORY', data: null });
+}
 
+// 删除分类
+export function deleteCategoryAction(id) {
+  return dispatch => {
+    dispatch({ type: 'BEGIN_DELETE_CATEGORY' });
+    return fetch(apis.deleteCategory, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: id
+      })
+    }).
+    then(response => response.json()).
+    then(json => {
+      dispatch({ type: 'DELETE_CATEGORY', data: json });
+    }).
+    catch(json => {
+      dispatch({ type: 'DELETE_CATEGORY', data: json });
+    });
+  };
+}
+// 清空
+export function emptyDeleteCategoryAction() {
+  return dispatch => dispatch({ type: 'DELETE_CATEGORY', data: null });
+}
 

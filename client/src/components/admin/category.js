@@ -2,8 +2,16 @@ import React, { Component, PropTypes } from 'react';
 import { Card, Col, Row, Modal, Form, Input, message, Icon } from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import { connect } from 'react-redux';
-import { categoryAction, categoryUpdateAction, emptyCategoryUpdate } from '../../actions/navBar';
-import { isArray } from '../../util';
+import {
+  categoryAction,
+  categoryUpdateAction,
+  emptyCategoryUpdateAction,
+  addCategoryAction,
+  emptyAddCategoryAction,
+  deleteCategoryAction,
+  emptyDeleteCategoryAction
+} from '../../actions/navBar';
+import { isArray, getTime } from '../../util';
 
 const FormItem = Form.Item;
 const createForm = Form.create;
@@ -42,21 +50,79 @@ class Category extends Component {
     dispatch(categoryAction(true));
   }
   componentDidUpdate() {
-    const { dispatch, updateCategory } = this.props;
+    const {
+      dispatch,
+      updateCategory,
+      addCategory,
+      deleteCategory
+    } = this.props;
     if (updateCategory && updateCategory.code === 200) {
       this.toggleModal(null);
       dispatch(categoryAction(true));
+      dispatch(emptyCategoryUpdateAction());
       message.success('更新成功!');
     } else if (updateCategory) {
-      message.error(updateCategory.mseeage);
+      dispatch(emptyCategoryUpdateAction());
+      message.error(updateCategory.message);
     }
-    dispatch(emptyCategoryUpdate());
+    if (addCategory && addCategory.code === 200) {
+      this.toggleModal(null);
+      dispatch(categoryAction(true));
+      dispatch(emptyAddCategoryAction());
+      message.success('添加分类成功!');
+    } else if (addCategory) {
+      dispatch(emptyAddCategoryAction());
+      message.error(addCategory.message);
+    }
+
+    if (deleteCategory && deleteCategory.code === 200) {
+      dispatch(categoryAction(true));
+      dispatch(emptyDeleteCategoryAction());
+      message.success('删除分类成功!');
+    } else if (deleteCategory) {
+      dispatch(emptyDeleteCategoryAction());
+      message.error(deleteCategory.message);
+    }
   }
   toggleModal(item) {
     this.setState({
       visible: !this.state.visible,
       show: !this.state.show,
       categoryItem: item || {}
+    });
+  }
+  // 更新分类 或者 添加分类
+  updateCatogory() {
+    console.log(this.state.categoryItem);
+    const id = '_id';
+    const { dispatch, form } = this.props;
+    form.validateFields((errors, values) => {
+      var data = {};
+      if (errors) {
+        return;
+      }
+      if (!errors) {
+        data.id = this.state.categoryItem[id];
+        data.name = values.categoryName;
+        data.desc = values.categoryDesc;
+      }
+      if (data.id) { // 更新
+        dispatch(categoryUpdateAction(data.id, data.name, data.desc));
+      } else { // 新增
+        dispatch(addCategoryAction(data.name, data.desc));
+      }
+    });
+  }
+  // 删除
+  deleteCategory(e, id) {
+    e.stopPropagation();
+    const { dispatch } = this.props;
+    Modal.confirm({
+      title: '提示',
+      content: '确认删除该分类吗？',
+      onOk() {
+        dispatch(deleteCategoryAction(id));
+      }
     });
   }
   // 创建动画form
@@ -125,11 +191,15 @@ class Category extends Component {
             onClick={() => this.toggleModal(item)}
           >
             <p className="category-item">{item.desc}</p>
-            <p className="category-item">创建时间：{item.createTime || '--'}</p>
-            <p className="category-item">更新时间：{item.updateTime || '--'}</p>
+            <p className="category-item">
+              创建时间：{item.createTime ? getTime(item.createTime) : '--'}
+            </p>
+            <p className="category-item">
+              更新时间：{item.updateTime ? getTime(item.updateTime) : '--'}
+            </p>
             <div className="category-action clearfix">
               <Icon type="edit" style={createStyle.icon} />
-              <Icon type="delete" style={createStyle.icon} />
+              <Icon type="delete" style={createStyle.icon} onClick={(e) => this.deleteCategory(e, item[id])} />
             </div>
           </Card>
         </Col>
@@ -137,24 +207,6 @@ class Category extends Component {
       );
     }
     return '';
-  }
-  // 更新分类 或者 添加分类
-  updateCatogory() {
-    console.log(this.state.categoryItem);
-    const id = '_id';
-    const { dispatch, form } = this.props;
-    form.validateFields((errors, values) => {
-      var data = {};
-      if (errors) {
-        return;
-      }
-      if (!errors) {
-        data.id = this.state.categoryItem[id];
-        data.name = values.categoryName;
-        data.desc = values.categoryDesc;
-      }
-      dispatch(categoryUpdateAction(data.id, data.name, data.desc));
-    });
   }
   render() {
     const queueFormDom = this.createQueueForm();
@@ -189,7 +241,9 @@ class Category extends Component {
 function mapToState(state) {
   return {
     category: state.navBar.category,
-    updateCategory: state.navBar.updateCategory
+    updateCategory: state.navBar.updateCategory,
+    addCategory: state.navBar.addCategory,
+    deleteCategory: state.navBar.deleteCategory
   };
 }
 Category.propTypes = {
@@ -199,6 +253,8 @@ Category.propTypes = {
     PropTypes.object,
     PropTypes.array
   ]),
-  updateCategory: PropTypes.object
+  updateCategory: PropTypes.object,
+  addCategory: PropTypes.object,
+  deleteCategory: PropTypes.object
 };
 export default connect(mapToState)(createForm()(Category));
