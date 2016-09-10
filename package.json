@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dll": "webpack --config=webpack.dll.config.js",
-    "dev": "NODE_ENV=development nodemon app.js",
+    "dev": "NODE_ENV=development & nodemon app.js",
     "dev2": "NODE_ENV=development webpack-dashboard -- nodemon app.js"
   },
   "author": "",
@@ -27,6 +27,7 @@
     "jquery": "^3.1.0",
     "mongodb": "^2.2.5",
     "morgan": "^1.7.0",
+    "qiniu": "^6.1.11",
     "rc-queue-anim": "^0.12.4",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",

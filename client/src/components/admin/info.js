@@ -33,7 +33,7 @@ class Info extends Component {
       if (+updateInfoState.code === 200) {
         message.success('更新成功！');
       } else {
-        message.error(updateInfoState.msg);
+        message.error(updateInfoState.message);
       }
       dispatch(resetUpdateInfo());
     }
