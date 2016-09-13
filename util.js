@@ -1,7 +1,7 @@
 function errorCheck(res, message, code) {
   return res.json({
     code: code || 400,
-    mseeage: message,
+    message: message,
     data: null
   });
 }

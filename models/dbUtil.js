@@ -29,7 +29,7 @@ var url = 'mongodb://localhost:27017/blog';
 module.exports = function(collectionName) {
   return new Promise(function(resolve, reject) {
     MongoClient.connect(url, function(err, db) {
-      db.collection(collectionName, { strict: true }, function(error, collection) {
+      db.collection(collectionName, { strict: false }, function(error, collection) {
         if (error) {
           reject(error);
         } else {

@@ -21,8 +21,8 @@ export function categoryAction(isAll) {
 }
 
 // 更新category
-export function categoryUpdateAction(id, name, desc) {
-  console.log(id, name, desc);
+export function categoryUpdateAction(data) {
+  console.log(data);
   return dispatch => {
     dispatch({ type: 'BEGIN_UPDATE_CATEGORY' });
     return fetch(apis.updateCategory, {
@@ -31,11 +31,7 @@ export function categoryUpdateAction(id, name, desc) {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        id: id,
-        name: name,
-        desc: desc
-      })
+      body: JSON.stringify(data)
     }).
     then(response => response.json()).
     then(json => {
@@ -51,7 +47,7 @@ export function emptyCategoryUpdateAction() {
   return dispatch => dispatch({ type: 'UPDATE_CATEGORY', data: null });
 }
 // 添加分类
-export function addCategoryAction(name, desc) {
+export function addCategoryAction(data) {
   return dispatch => {
     dispatch({ type: 'BEGIN_ADD_CATEGORY' });
     return fetch(apis.addCategory, {
@@ -60,10 +56,7 @@ export function addCategoryAction(name, desc) {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        name: name,
-        desc: desc
-      })
+      body: JSON.stringify(data)
     }).
     then(response => response.json()).
     then(json => {

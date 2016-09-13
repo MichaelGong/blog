@@ -5,6 +5,7 @@ function Category(category) {
   this.name = category.name; // 类别名称
   this.desc = category.desc; // 类别描述
   this.pid = category.pid; // 父类别的id
+  this.weight = category.weight; // 排序权重
 }
 
 // 获取类别
@@ -22,7 +23,7 @@ Category.get = function(cb) {
 Category.prototype.update = function(id, cb) {
   var self = this;
   var categoryTemp = {};
-  var field = ['name', 'pid', 'desc'];
+  var field = ['name', 'pid', 'desc', 'weight'];
   field.forEach(function(key) {
     if (self[key]) {
       categoryTemp[key] = self[key];
@@ -50,6 +51,7 @@ Category.prototype.insert = function(cb) {
     name: this.name,
     desc: this.desc,
     pid: this.pid ? this.pid : 0,
+    weight: this.weight,
     createTime: new Date().getTime(),
     updateTime: new Date().getTime()
   };

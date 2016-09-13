@@ -42,7 +42,8 @@ router.post('/update', function(req, res) {
   category = new Category({
     name: req.body.name,
     desc: req.body.desc,
-    pid: req.body.pid
+    pid: req.body.pid,
+    weight: req.body.weight || 1
   });
   category.update(req.body.id, function(err) {
     if (err) {
@@ -86,7 +87,8 @@ router.post('/add', function(req, res) {
         category = new Category({
           name: req.body.name,
           desc: req.body.desc,
-          pid: req.body.pid ? req.body.pid : 0
+          pid: req.body.pid ? req.body.pid : 0,
+          weight: req.body.weight || 1
         });
         category.insert(function(error) {
           if (error) {

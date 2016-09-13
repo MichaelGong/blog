@@ -23,7 +23,7 @@ const createStyle = {
     lineHeight: '30px'
   },
   plus: {
-    padding: 24,
+    padding: 39,
     color: '#ccc',
     fontSize: 30,
     cursor: 'pointer'
@@ -62,8 +62,8 @@ class Category extends Component {
       dispatch(emptyCategoryUpdateAction());
       message.success('更新成功!');
     } else if (updateCategory) {
-      dispatch(emptyCategoryUpdateAction());
       message.error(updateCategory.message);
+      dispatch(emptyCategoryUpdateAction());
     }
     if (addCategory && addCategory.code === 200) {
       this.toggleModal(null);
@@ -71,8 +71,8 @@ class Category extends Component {
       dispatch(emptyAddCategoryAction());
       message.success('添加分类成功!');
     } else if (addCategory) {
-      dispatch(emptyAddCategoryAction());
       message.error(addCategory.message);
+      dispatch(emptyAddCategoryAction());
     }
 
     if (deleteCategory && deleteCategory.code === 200) {
@@ -80,8 +80,8 @@ class Category extends Component {
       dispatch(emptyDeleteCategoryAction());
       message.success('删除分类成功!');
     } else if (deleteCategory) {
-      dispatch(emptyDeleteCategoryAction());
       message.error(deleteCategory.message);
+      dispatch(emptyDeleteCategoryAction());
     }
   }
   toggleModal(item) {
@@ -103,13 +103,14 @@ class Category extends Component {
       }
       if (!errors) {
         data.id = this.state.categoryItem[id];
-        data.name = values.categoryName;
-        data.desc = values.categoryDesc;
+        data.name = values.categoryName; // 名称
+        data.desc = values.categoryDesc; // 描述
+        data.weight = values.categoryWeight; // 权重
       }
       if (data.id) { // 更新
-        dispatch(categoryUpdateAction(data.id, data.name, data.desc));
+        dispatch(categoryUpdateAction(data));
       } else { // 新增
-        dispatch(addCategoryAction(data.name, data.desc));
+        dispatch(addCategoryAction(data));
       }
     });
   }
@@ -129,14 +130,14 @@ class Category extends Component {
   createQueueForm() {
     const { getFieldProps, getFieldError } = this.props.form;
     const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 }
+      labelCol: { span: 5 },
+      wrapperCol: { span: 19 }
     };
     const categoryName = getFieldProps('categoryName', {
       rules: [{
         required: true,
         min: 1,
-        message: '请输入个类别名称'
+        message: '请输入类别名称'
       }],
       initialValue: this.state.categoryItem.name || ''
     });
@@ -147,6 +148,14 @@ class Category extends Component {
         message: '请输入类别描述'
       }],
       initialValue: this.state.categoryItem.desc || ''
+    });
+    const categoryWeight = getFieldProps('categoryWeight', {
+      rules: [{
+        required: true,
+        min: 1,
+        message: '请输入类别描述'
+      }],
+      initialValue: this.state.categoryItem.weight || ''
     });
     return (
       <QueueAnim
@@ -172,6 +181,14 @@ class Category extends Component {
             help={(getFieldError('categoryDesc') || []).join(', ')}
           >
             <Input {...categoryDesc} type="text" placeholder="请输入分类描述" />
+          </FormItem>,
+          <FormItem
+            key="item3"
+            {...formItemLayout}
+            label="排序权重："
+            help={(getFieldError('categoryWeight') || []).join(', ')}
+          >
+            <Input {...categoryWeight} type="text" placeholder="请输入分类排序权重" />
           </FormItem>
         ] : null}
       </QueueAnim>
@@ -184,13 +201,16 @@ class Category extends Component {
     if (isArray(category)) {
       return category.map(item =>
         (
-        <Col lg={{ span: 6 }} xs={{ span: 12 }} sm={{ span: 8 }} md={{ span: 8 }} key={item[id]}>
+        <Col lg={{ span: 6 }} xs={{ span: 12 }} sm={{ span: 12 }} md={{ span: 8 }} key={item[id]}>
           <Card
             style={createStyle.card}
             title={item.name}
             onClick={() => this.toggleModal(item)}
           >
             <p className="category-item">{item.desc}</p>
+            <p className="category-item">
+              排序权重：{item.weight || '--'}
+            </p>
             <p className="category-item">
               创建时间：{item.createTime ? getTime(item.createTime) : '--'}
             </p>
@@ -199,7 +219,11 @@ class Category extends Component {
             </p>
             <div className="category-action clearfix">
               <Icon type="edit" style={createStyle.icon} />
-              <Icon type="delete" style={createStyle.icon} onClick={(e) => this.deleteCategory(e, item[id])} />
+              <Icon
+                type="delete"
+                style={createStyle.icon}
+                onClick={(e) => this.deleteCategory(e, item[id])}
+              />
             </div>
           </Card>
         </Col>
@@ -215,7 +239,7 @@ class Category extends Component {
       <div>
         <Row>
           {categoryDom}
-          <Col lg={{ span: 6 }} xs={{ span: 12 }} sm={{ span: 8 }} md={{ span: 8 }} key="card-add">
+          <Col lg={{ span: 6 }} xs={{ span: 12 }} sm={{ span: 12 }} md={{ span: 8 }} key="card-add">
             <Card
               style={{ textAlign: 'center', margin: 5 }}
               title="添加分类"
