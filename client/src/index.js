@@ -10,6 +10,9 @@ import Detail from './components/detail';
 import MenuDOM from './components/admin/menu';
 import Info from './components/admin/info';
 import Category from './components/admin/category';
+import Tag from './components/admin/tag';
+import Article from './components/admin/article';
+import Write from './components/admin/write';
 import './css/common.less';
 import DevTool from './containers/devTools';
 const store = configureStore();
@@ -35,6 +38,9 @@ render((
           <IndexRoute component={Info} />
           <Route path="info" component={Info} />
           <Route path="category" component={Category} />
+          <Route path="tag" component={Tag} />
+          <Route path="article" component={Article} />
+          <Route path="write" component={Write} />
         </Route>
       </Router>
       {devTool}

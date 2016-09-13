@@ -54,13 +54,13 @@ class MenuDOM extends Component {
               <Link to="/view/admin/category"><Icon type="appstore" />类别管理</Link>
             </Menu.Item>
             <Menu.Item key="tag">
-              <Link to="/view/admin/info"><Icon type="tags" />标签管理</Link>
+              <Link to="/view/admin/tag"><Icon type="tags" />标签管理</Link>
             </Menu.Item>
             <Menu.Item key="article">
-              <Link to="/view/admin/info"><Icon type="file-text" />文章管理</Link>
+              <Link to="/view/admin/article"><Icon type="file-text" />文章管理</Link>
             </Menu.Item>
             <Menu.Item key="write">
-              <Link to="/view/admin/info">
+              <Link to="/view/admin/write">
                 <Icon type="code" />
                 来篇文章
               </Link>

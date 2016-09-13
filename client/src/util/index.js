@@ -28,3 +28,7 @@ export function getTimeLeft(timeStamp) {
 export function isArray(obj) {
   return Object.prototype.toString.call(obj) === '[object Array]';
 }
+// 产生随机数 例如，生成0-9的随机数(包括0和9) random(0,9)
+export function random(min, max) {
+  return Math.floor(min + Math.random() * (max - min + 1));
+}
