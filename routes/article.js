@@ -1,16 +1,12 @@
 var express = require('express');
-var marked = require('marked');
 var router = express.Router();
-// var objectId = require('mongodb').ObjectId;
+var objectId = require('mongodb').ObjectId;
 var Article = require('../models/article');
-
-var fs = require('fs');
-var testMD = fs.readFileSync('./test.md', 'utf-8');
 
 function errorCheck(res, message) {
   return res.json({
     code: 400,
-    mseeage: message,
+    message: message,
     data: null
   });
 }
@@ -103,6 +99,26 @@ router.get('/getById', function(req, res) {
     res.json({
       code: 200,
       data: infos
+    });
+  });
+});
+
+router.post('/delete', function(req, res) {
+  if (!objectId.isValid(req.body.id)) {
+    errorCheck(res, '文章id不能为空');
+  }
+  Article.delete(req.body.id, function(err) {
+    if (err) {
+      res.json({
+        code: 400,
+        message: err.message,
+        data: err
+      });
+      return;
+    }
+    res.json({
+      code: 200,
+      data: {}
     });
   });
 });

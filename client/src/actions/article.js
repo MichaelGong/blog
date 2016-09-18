@@ -1,6 +1,6 @@
 import apis from '../api';
 // 获取文章
-export function articleAll(categoryid, tagid) {
+export function articleAllAction(categoryid, tagid) {
   var url = apis.getAllArticles;
   if (tagid || categoryid) {
     url = apis.getAllArticles + '?categoryid=' +

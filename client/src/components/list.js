@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { articleAll } from '../actions/article';
+import { articleAllAction } from '../actions/article';
 import Tags from './tags';
 import { getTimeLeft } from '../util';
 import './list.less';
@@ -23,7 +23,7 @@ class ListApp extends Component {
   }
   getArticles(tagid) {
     const { dispatch, params } = this.props;
-    dispatch(articleAll(params.categoryid, tagid));
+    dispatch(articleAllAction(params.categoryid, tagid));
   }
   render() {
     let articleDom = null;

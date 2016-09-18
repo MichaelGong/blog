@@ -1,5 +1,6 @@
 // 时间日期
 export function getTime(timeStamp) {
+  if (!timeStamp) return '---';
   let date = new Date(timeStamp);
 
   return date.getFullYear() + '-' + parseInt(date.getMonth() + 1, 10) + '-' + date.getDate()
