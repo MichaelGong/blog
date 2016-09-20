@@ -38,6 +38,12 @@ module.exports = {
       test: /\.less$/,
       loader: ExtractTextPlugin.extract('style', 'css?-autoprefixer!postcss!less')
     }, {
+      test: /\.scss$/,
+      loader: ExtractTextPlugin.extract('style', 'css?-autoprefixer!postcss!sass')
+    }, {
+      test: /\.json$/,
+      loader: 'json'
+    }, {
       test: /\.(jpg|jpeg|gif|png)$/i,
       loader: 'file'
     }, {

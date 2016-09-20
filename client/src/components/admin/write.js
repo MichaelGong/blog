@@ -1,63 +1,47 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Form, Input, Row, Col, Select } from 'antd';
+import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
 import 'marked';
 import 'prettify';
 import editormd from 'editormd';
 import 'editormd.css';
-import 'CodeMirror';
-
 const FormItem = Form.Item;
 const Option = Select.Option;
 
 class Write extends Component {
-  componentDidMount() {
-    console.log($('#editormd'));
-    if ($('#editormd').length > 0
-      && $('#editormd').children().length === 0) {
-      console.log('2222', editormd);
-      this.editor = editormd()('editormd', {
-        width: '100%',
-        height: 740,
-        markdown: '# 123123',
-        path: 'https://pandao.github.io/editor.md/lib/',
-        codeFold: true,
-        saveHTMLToTextarea: true,    // 保存 HTML 到 Textarea
-        searchReplace: true,
-        watch: true,                // 关闭实时预览
-        htmlDecode: 'style,script,iframe|on*',            // 开启 HTML 标签解析，为了安全性，默认不开启
-        // toolbar  : false,             //关闭工具栏
-        // previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
-
-        // dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
-        // dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
-        // dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为true
-        // dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为0.1
-        // dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
-        imageUpload: true,
-        imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
-        imageUploadURL: './php/upload.php',
-        onload: function() {
-          console.log('onload', this);
-            // this.fullscreen();
-            // this.unwatch();
-            // this.watch().fullscreen();
-
-            // this.setMarkdown("#PHP");
-            // this.width("100%");
-            // this.height(480);
-            // this.resize("100%", 640);
-        }
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      md: '#sadfa'
+    };
+  }
+  textAreaChangeHandler(e) {
+    console.log(e.target);
+    this.setState({
+      md: e.target.value
+    });
+    this.renderMD(e.target.value);
+  }
+  renderMD(md) {
+    if ($('#editormd').length > 0) {
+      $('#editormd').html('');
+      editormd().markdownToHTML('editormd', {
+        markdown: md, // + "\r\n" + $("#append-test").text(),
+        // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
+        htmlDecode: 'style,script,iframe',  // you can filter tags decode
+        // toc             : false,
+        tocm: true,    // Using [TOCM]
+        tocContainer: '#article-sideBar-content' // 自定义 ToC 容器层
       });
-      console.log(this.editor);
     }
   }
   render() {
+    let textAreaHeight = document.body.clientHeight - 200;
     return (
       <div>
-        <FormItem>
+        <FormItem style={{ marginBottom: 8 }}>
           <Input placeholder="请输入文章标题" style={{ width: '100%' }} />
         </FormItem>
         <Row gutter={16}>
@@ -71,7 +55,21 @@ class Write extends Component {
             </Select>
           </Col>
         </Row>
-        <div id="editormd"></div>
+        <Row style={{ marginTop: 10, height: textAreaHeight }}>
+          <Col span={12} style={{ height: '100%' }}>
+            <textarea
+              className="textarea-editor"
+              value={this.state.md}
+              onChange={(e) => this.textAreaChangeHandler(e)}
+            ></textarea>
+          </Col>
+          <Col span={12} style={{ height: '100%' }}>
+            <div style={{ height: '100%', overflow: 'auto' }}>
+              <div id="editormd">
+              </div>
+            </div>
+          </Col>
+        </Row>
       </div>
     );
   }
