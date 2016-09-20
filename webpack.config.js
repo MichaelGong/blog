@@ -58,6 +58,7 @@ module.exports = {
       jquery: path.join(__dirname, 'node_modules', 'jquery', 'dist', 'jquery.js'),
       editormd: path.join(__dirname, 'node_modules', 'editor.md', 'editormd.js'),
       prettify: path.join(__dirname, 'node_modules', 'editor.md', 'lib', 'prettify.min.js'),
+      CodeMirror: path.join(__dirname, 'node_modules', 'editor.md', 'lib', 'codemirror', 'codemirror.min.js'),
       marked: path.join(__dirname, 'node_modules', 'marked', 'lib', 'marked.js'),
       'editormd.css': path.join(__dirname, 'node_modules', 'editor.md', 'css', 'editormd.css')
     },
@@ -91,7 +92,8 @@ module.exports = {
       jQuery: 'jquery',
       'window.jQuery': 'jquery',
       editormd: 'editormd',
-      marked: 'marked'
+      marked: 'marked',
+      CodeMirror: 'CodeMirror'
     })
   ],
   devtool: 'source-map'

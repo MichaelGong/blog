@@ -3,10 +3,14 @@ import { connect } from 'react-redux';
 import {
   Table,
   Icon,
-  Modal
+  Modal,
+  message,
+  Button
 } from 'antd';
 import {
-  articleAllAction
+  articleAllAction,
+  deleteArticleByIdAction,
+  emptyDeleteArticleByIdAction
 } from '../../actions/article';
 import {
   categoryAction
@@ -29,6 +33,21 @@ class Article extends Component {
     dispatch(articleAllAction());
     dispatch(categoryAction(true));
   }
+  componentDidUpdate() {
+    const {
+      deleteArticleData,
+      dispatch
+    } = this.props;
+    if (deleteArticleData && deleteArticleData.code === 200) { // 删除文章
+      this.cancelDeleteArticleModal();
+      dispatch(emptyDeleteArticleByIdAction());
+      dispatch(articleAllAction());
+      message.success('删除成功!');
+    } else if (deleteArticleData) {
+      message.error(deleteArticleData.message);
+      dispatch(emptyDeleteArticleByIdAction());
+    }
+  }
   // 根据id获取分类名称
   getCategoryName(id) {
     const { categoryData } = this.props;
@@ -48,14 +67,24 @@ class Article extends Component {
   // 隐藏删除文章弹出框
   cancelDeleteArticleModal() {
     this.setState({
-      deleteModalVisible: false
+      deleteModalVisible: false,
+      deleteArticleId: null
     });
   }
   // 删除文章
   deleteArticle() {
-    console.log(this.state.deleteArticleId);
+    const { dispatch } = this.props;
+    dispatch(deleteArticleByIdAction([this.state.deleteArticleId]));
+  }
+  // 批量删除文章
+  deleteArticles() {
+    let id = '_id';
+    if (this.state.selectedRows.length === 0) return;
+    const { dispatch } = this.props;
+    dispatch(deleteArticleByIdAction(this.state.selectedRows.map(item => item[id])));
   }
   render() {
+    let me = this;
     // 列
     const columns = [{
       title: '标题',
@@ -100,21 +129,30 @@ class Article extends Component {
     // 多选框
     const rowSelection = {
       onChange(selectedRowKeys, selectedRows) {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        console.log('onChange:',
+          `selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        me.setState({
+          selectedRows: selectedRows
+        });
       },
       onSelect(record, selected, selectedRows) {
-        console.log(record, selected, selectedRows);
+        console.log('onSelect:', record, selected, selectedRows);
       },
       onSelectAll(selected, selectedRows, changeRows) {
-        console.log(selected, selectedRows, changeRows);
+        console.log('onSelectAll:', selected, selectedRows, changeRows);
       }
     };
-    const {
-      allArticlesData
-    } = this.props;
+    const { allArticlesData } = this.props;
 
     return (
       <div>
+        <Button
+          type="primary"
+          style={{ marginBottom: 15 }}
+          onClick={() => this.deleteArticles()}
+        >
+          批量删除
+        </Button>
         <Table
           rowSelection={rowSelection}
           columns={columns}
@@ -136,7 +174,8 @@ class Article extends Component {
 function mapToState(state) {
   return {
     allArticlesData: state.article.allArticles,
-    categoryData: state.navBar.category
+    categoryData: state.navBar.category,
+    deleteArticleData: state.article.deleteArticle
   };
 }
 Article.propTypes = {
@@ -146,6 +185,7 @@ Article.propTypes = {
   categoryData: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.array
-  ])
+  ]),
+  deleteArticleData: PropTypes.object
 };
 export default connect(mapToState)(Article);

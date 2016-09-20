@@ -58,11 +58,18 @@ Article.getById = function(id, cb) {
     });
   }).catch(cb);
 };
-// 删除文章
-Article.delete = function(id, cb) {
+// 删除文章 (软删除)
+Article.delete = function(idArr, cb) {
+  console.log(idArr.map(id => objectId(id)));
   dbUtil(collectionName).then((obj) => {
-    obj.collection.remove({
-      _id: objectId(id)
+    obj.collection.update({
+      _id: { $in: idArr.map(id => objectId(id)) }
+    }, {
+      $set: {
+        isShow: false
+      }
+    }, {
+      multi: true
     }).then(() => {
       obj.db.close();
       cb(null);

@@ -30,3 +30,30 @@ export function getArticleById(articleId) {
       });
   };
 }
+// 根据id删除文章
+export function deleteArticleByIdAction(articleId) {
+  return dispatch => {
+    dispatch({ type: 'BEGIN_DELETE_ARTICLE' });
+    return fetch(apis.deleteArticleById, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        idArr: articleId
+      })
+    }).
+    then(response => response.json()).
+    then(json => {
+      dispatch({ type: 'DELETE_ARTICLE', data: json });
+    }).
+    catch(json => {
+      dispatch({ type: 'DELETE_ARTICLE', data: json });
+    });
+  };
+}
+// 清空 DELETE_ARTICLE
+export function emptyDeleteArticleByIdAction() {
+  return dispatch => dispatch({ type: 'DELETE_ARTICLE', data: null });
+}

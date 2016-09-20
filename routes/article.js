@@ -104,10 +104,17 @@ router.get('/getById', function(req, res) {
 });
 
 router.post('/delete', function(req, res) {
-  if (!objectId.isValid(req.body.id)) {
-    errorCheck(res, '文章id不能为空');
+  if (!req.body.idArr) {
+    errorCheck(res, '请传入文章id');
   }
-  Article.delete(req.body.id, function(err) {
+  req.body.idArr.forEach(function(item) {
+    if (!objectId.isValid(item)) {
+      return errorCheck(res, '文章id不合法！');
+    }
+    return '';
+  });
+
+  Article.delete(req.body.idArr, function(err) {
     if (err) {
       res.json({
         code: 400,
