@@ -57,6 +57,7 @@ module.exports = {
   postcss: [autoprefixer({ browsers: ['last 2 versions'] })],
   babel: {
     presets: ['es2015', 'stage-0', 'react'],
+    cacheDirectory: true,
     plugins: ['transform-runtime', ['antd', [{ 'libraryName': 'antd', 'style': true }]]]
   },
   resolve: {

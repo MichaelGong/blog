@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Form, Input, Row, Col, Select, Tag } from 'antd';
+import { random } from '../../util';
+
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
 /* eslint-disable */
@@ -28,6 +30,11 @@ class Write extends Component {
     });
     this.renderMD(e.target.value);
   }
+  tagInputKeyPress(e) {
+    if (e.key === 'Enter' || e.charCode === '13') { // 监听enter键
+      console.log(e.target.value);
+    }
+  }
   renderMD(md) {
     if ($('#editormd').length > 0) {
       $('#editormd').html('');
@@ -39,6 +46,7 @@ class Write extends Component {
     }
   }
   render() {
+    const tagColorArr = ['blue', 'green', 'yellow', 'red'];
     let textAreaHeight = document.body.clientHeight - 200;
     return (
       <div>
@@ -61,23 +69,23 @@ class Write extends Component {
           </Col>
           <Col xs={24} sm={12}>
             <div className="tags-container">
-              <Tag closable color="blue">蓝色</Tag>
-              <Tag closable color="green">绿色</Tag>
-              <Tag closable color="yellow">黄色</Tag>
-              <Tag closable color="red">红色</Tag>
-              <Input placeholder="请输入标签" />
+              <Tag closable color={tagColorArr[random(0, 3)]}>蓝色</Tag>
+              <Tag closable color={tagColorArr[random(0, 3)]}>绿色</Tag>
+              <Tag closable color={tagColorArr[random(0, 3)]}>黄色</Tag>
+              <Tag closable color={tagColorArr[random(0, 3)]}>红色</Tag>
+              <Input placeholder="请输入标签" className="tag-input" onKeyPress={(e) => this.tagInputKeyPress(e)} />
             </div>
           </Col>
         </Row>
         <Row style={{ marginTop: 10, height: textAreaHeight }}>
-          <Col span={12} style={{ height: '100%' }}>
+          <Col xs={24} sm={12} style={{ height: '100%' }}>
             <textarea
               className="textarea-editor"
               value={this.state.md}
               onChange={(e) => this.textAreaChangeHandler(e)}
             ></textarea>
           </Col>
-          <Col span={12} style={{ height: '100%' }}>
+          <Col xs={0} sm={12} style={{ height: '100%' }}>
             <div className="editor-container">
               <div id="editormd">
               </div>
