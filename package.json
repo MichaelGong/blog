@@ -1,6 +1,6 @@
 {
   "name": "gonghao",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "gonghao's blog",
   "main": "index.js",
   "scripts": {
