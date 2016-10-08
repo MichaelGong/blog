@@ -54,7 +54,7 @@ module.exports = {
       loader: 'file-loader'
     }]
   },
-  postcss: [autoprefixer({ browsers: ['last 2 versions'] })],
+  postcss: [autoprefixer({ browsers: ['> 1%'] })],
   babel: {
     presets: ['es2015', 'stage-0', 'react'],
     cacheDirectory: true,

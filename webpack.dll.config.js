@@ -32,7 +32,14 @@ module.exports = {
     // new webpack.optimize.UglifyJsPlugin(),
     new HtmlWebpackPlugin({
       filename: path.join(__dirname, './index.tpl'),
-      template: path.join(__dirname, './index.tpl'),
+      template: path.join(__dirname, './index.tpl')
     }),
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      output: {
+        // 是否保留注释,默认为false
+        comments: false
+      }
+    })
   ]
-}
+};
