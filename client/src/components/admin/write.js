@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Form, Input, Row, Col, Select, Tag } from 'antd';
-import { random } from '../../util';
+import { random, debounce } from '../../util';
 
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
@@ -18,7 +18,9 @@ class Write extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      md: '# sadfa'
+      md: '# sadfa',
+      choosenTags: [],
+      tagsList: []
     };
   }
   componentDidMount() {
@@ -32,22 +34,58 @@ class Write extends Component {
   }
   tagInputKeyPress(e) {
     if (e.key === 'Enter' || e.charCode === '13') { // 监听enter键
-      console.log(e.target.value);
+      console.log('按了enter键：', e.target.value);
+      if (e.target.value) {
+        this.setState({
+          choosenTags: [
+            { id: 1, name: '胜多负少' },
+            { id: 2, name: '发光时代水电费' },
+            { id: 3, name: '合法固定' }
+          ]
+        });
+      }
     }
   }
+  handleChange(value) {
+    console.log(`selected ${value}`);
+  }
+  chooseTagItem(item) {
+    this.state.choosenTags.push(item);
+    this.setState({
+      choosenTags: this.state.choosenTags
+    });
+  }
   renderMD(md) {
+    console.log('--------------------------------------');
     if ($('#editormd').length > 0) {
       $('#editormd').html('');
       editormd().markdownToHTML('editormd', {
         markdown: md, // + "\r\n" + $("#append-test").text(),
+        toc: false,
         // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
         htmlDecode: 'style,script,iframe'  // you can filter tags decode
       });
     }
   }
   render() {
-    const tagColorArr = ['blue', 'green', 'yellow', 'red'];
+    console.log(this.state.choosenTags);
+    // const tagColorArr = ['blue', 'green', 'yellow', 'red'];
     let textAreaHeight = document.body.clientHeight - 200;
+    // <Tag closable color={tagColorArr[random(0, 3)]}>蓝色</Tag>
+    //           <Tag closable color={tagColorArr[random(0, 3)]}>绿色</Tag>
+    //           <Tag closable color={tagColorArr[random(0, 3)]}>黄色</Tag>
+    //           <Tag closable color={tagColorArr[random(0, 3)]}>红色</Tag>
+    const dropdownDom = this.state.choosenTags.map(item =>
+      (
+      <li
+        key={item.id}
+        className="ant-select-dropdown-menu-item"
+        onClick={() => this.chooseTagItem(item)}
+      >
+        {item.name}
+      </li>
+      )
+    );
     return (
       <div>
         <Row gutter={16}>
@@ -69,11 +107,19 @@ class Write extends Component {
           </Col>
           <Col xs={24} sm={12}>
             <div className="tags-container">
-              <Tag closable color={tagColorArr[random(0, 3)]}>蓝色</Tag>
-              <Tag closable color={tagColorArr[random(0, 3)]}>绿色</Tag>
-              <Tag closable color={tagColorArr[random(0, 3)]}>黄色</Tag>
-              <Tag closable color={tagColorArr[random(0, 3)]}>红色</Tag>
-              <Input placeholder="请输入标签" className="tag-input" onKeyPress={(e) => this.tagInputKeyPress(e)} />
+              <Input
+                placeholder="请输入标签"
+                className="tag-input"
+                onKeyPress={(e) => this.tagInputKeyPress(e)}
+              />
+              <div
+                className="ant-select-dropdown dropdown-write-tags"
+                style={{ display: this.state.choosenTags.length > 0 ? 'block' : 'none' }}
+              >
+                <ul className="ant-select-dropdown-menu write-tags">
+                  {dropdownDom}
+                </ul>
+              </div>
             </div>
           </Col>
         </Row>

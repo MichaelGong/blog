@@ -71,11 +71,31 @@
     padding: 2px 3px;
     border-radius: 6px;
     min-height: 32px;
+    position: relative;
   }
   .tag-input, .tag-input:hover, .tag-input:focus {
     border: none;
     width: auto;
     box-shadow: none;
+  }
+  .dropdown-write-tags {
+    left: 0;
+    top: 110%;
+    width: 100%;
+    padding-top: 5px;
+  }
+  .write-tags .ant-select-dropdown-menu-item {
+    display: inline-block;
+    background: rgba(1,126,102,.08);
+    color: #017e66;
+    border: 0;
+    border-radius: 5px;
+    margin-left: 5px;
+    padding: 3px 10px;
+    &:hover {
+      background-color: #017e66;
+      color: #fff;
+    }
   }
 }
 @media screen and (max-width: 768px) {
