@@ -37,10 +37,10 @@ class Write extends Component {
       console.log('按了enter键：', e.target.value);
       if (e.target.value) {
         this.setState({
-          choosenTags: [
-            { id: 1, name: '胜多负少' },
-            { id: 2, name: '发光时代水电费' },
-            { id: 3, name: '合法固定' }
+          tagsList: [
+            { id: 1, name: '胜多负少', isShow: true },
+            { id: 2, name: '发光时代水电费', isShow: true },
+            { id: 3, name: '合法固定', isShow: true }
           ]
         });
       }
@@ -68,14 +68,13 @@ class Write extends Component {
     }
   }
   render() {
-    console.log(this.state.choosenTags);
-    // const tagColorArr = ['blue', 'green', 'yellow', 'red'];
+    const tagColorArr = ['blue', 'green', 'yellow', 'red'];
     let textAreaHeight = document.body.clientHeight - 200;
     // <Tag closable color={tagColorArr[random(0, 3)]}>蓝色</Tag>
     //           <Tag closable color={tagColorArr[random(0, 3)]}>绿色</Tag>
     //           <Tag closable color={tagColorArr[random(0, 3)]}>黄色</Tag>
     //           <Tag closable color={tagColorArr[random(0, 3)]}>红色</Tag>
-    const dropdownDom = this.state.choosenTags.map(item =>
+    const dropdownDom = this.state.tagsList.map(item =>
       (
       <li
         key={item.id}
@@ -84,6 +83,11 @@ class Write extends Component {
       >
         {item.name}
       </li>
+      )
+    );
+    const TagsDom = this.state.choosenTags.map(item =>
+      (
+      <Tag closable color={tagColorArr[random(0, 3)]} key={item.id}>{item.name}</Tag>
       )
     );
     return (
@@ -107,6 +111,7 @@ class Write extends Component {
           </Col>
           <Col xs={24} sm={12}>
             <div className="tags-container">
+              {TagsDom}
               <Input
                 placeholder="请输入标签"
                 className="tag-input"
@@ -114,7 +119,7 @@ class Write extends Component {
               />
               <div
                 className="ant-select-dropdown dropdown-write-tags"
-                style={{ display: this.state.choosenTags.length > 0 ? 'block' : 'none' }}
+                style={{ display: this.state.tagsList.length > 0 ? 'block' : 'none' }}
               >
                 <ul className="ant-select-dropdown-menu write-tags">
                   {dropdownDom}
