@@ -36,6 +36,7 @@ var Tags = {
       }).catch(cb);
     }).catch(cb);
   },
+  // 搜索标签，tags格式：'a|b'
   searchTag: function(tags, cb) {
     dbUtil(collectionName).then(obj => {
       obj.collection.find({
@@ -43,7 +44,7 @@ var Tags = {
       }).toArray().
       then((data) => {
         obj.db.close();
-        cb(data);
+        cb(null, data);
       }).
       catch(cb);
     }).catch(cb);

@@ -1,7 +1,8 @@
 const GET_TAGS = 'GET_TAGS';
 const BEGIN_GET_TAGS = 'BEGIN_GET_TAGS';
+const SEARCH_TAGS = 'SEARCH_TAGS';
 
-export default function(state = { tags: [] }, action = {}) {
+export default function(state = { tags: [], searchTags: [] }, action = {}) {
   switch (action.type) {
     case GET_TAGS: {
       return {
@@ -13,7 +14,15 @@ export default function(state = { tags: [] }, action = {}) {
     case BEGIN_GET_TAGS: {
       return {
         ...state,
-        fetching: true
+        fetching: true,
+        searchTags: []
+      };
+    }
+    case SEARCH_TAGS: {
+      return {
+        ...state,
+        fetching: false,
+        searchTags: action.data
       };
     }
     default:

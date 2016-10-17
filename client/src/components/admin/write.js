@@ -2,7 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Form, Input, Row, Col, Select, Tag } from 'antd';
 import { random, debounce } from '../../util';
-
+import {
+  searchTags
+} from '../../actions/tags';
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
 /* eslint-disable */
@@ -32,17 +34,20 @@ class Write extends Component {
     });
     this.renderMD(e.target.value);
   }
+  // 搜索标签
   tagInputKeyPress(e) {
+    const { dispatch } = this.props;
     if (e.key === 'Enter' || e.charCode === '13') { // 监听enter键
       console.log('按了enter键：', e.target.value);
       if (e.target.value) {
-        this.setState({
-          tagsList: [
-            { id: 1, name: '胜多负少', isShow: true },
-            { id: 2, name: '发光时代水电费', isShow: true },
-            { id: 3, name: '合法固定', isShow: true }
-          ]
-        });
+        dispatch(searchTags(e.target.value.split(',').join('|')));
+        // this.setState({
+        //   tagsList: [
+        //     { id: 1, name: '胜多负少', isShow: true },
+        //     { id: 2, name: '发光时代水电费', isShow: true },
+        //     { id: 3, name: '合法固定', isShow: true }
+        //   ]
+        // });
       }
     }
   }
@@ -68,12 +73,15 @@ class Write extends Component {
     }
   }
   render() {
+    const id = '_id';
+    const { searchTagsArr } = this.props;
     const tagColorArr = ['blue', 'green', 'yellow', 'red'];
     let textAreaHeight = document.body.clientHeight - 200;
-    const dropdownDom = this.state.tagsList.map(item =>
+    // 搜索出来的标签数组
+    const dropdownDom = searchTagsArr.map(item =>
       (
       <li
-        key={item.id}
+        key={item[id]}
         className="ant-select-dropdown-menu-item"
         onClick={() => this.chooseTagItem(item)}
       >
@@ -83,7 +91,7 @@ class Write extends Component {
     );
     const TagsDom = this.state.choosenTags.map(item =>
       (
-      <Tag closable color={tagColorArr[random(0, 3)]} key={item.id}>{item.name}</Tag>
+      <Tag closable color={tagColorArr[random(0, 3)]} key={item[id]}>{item.name}</Tag>
       )
     );
     return (
@@ -115,7 +123,7 @@ class Write extends Component {
               />
               <div
                 className="ant-select-dropdown dropdown-write-tags"
-                style={{ display: this.state.tagsList.length > 0 ? 'block' : 'none' }}
+                style={{ display: searchTagsArr.length > 0 ? 'block' : 'none' }}
               >
                 <ul className="ant-select-dropdown-menu write-tags">
                   {dropdownDom}
@@ -146,11 +154,11 @@ class Write extends Component {
 
 function mapToState(state) {
   return {
-    tagsData: state.tags.tags
+    searchTagsArr: state.tags.searchTags // 搜索出来的标签数组
   };
 }
 Write.propTypes = {
   dispatch: PropTypes.func,
-  tagsData: PropTypes.array
+  searchTagsArr: PropTypes.array
 };
 export default connect(mapToState)(Write);
