@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Form, Input, Row, Col, Select, Tag } from 'antd';
-import { random, debounce } from '../../util';
+import { random, closest } from '../../util';
 import {
   searchTags
 } from '../../actions/tags';
@@ -21,11 +21,21 @@ class Write extends Component {
     super(props);
     this.state = {
       md: '# sadfa',
-      choosenTags: []
+      choosenTags: [],
+      searchTagShow: false
     };
   }
   componentDidMount() {
+    let self = this;
     this.renderMD(this.state.md);
+    document.querySelector('body').addEventListener('click', function(e) {
+      console.log(e.target);
+      if (!closest(e.target, '.ant-select-dropdown-menu.write-tags')) {
+        self.setState({
+          searchTagShow: false
+        });
+      }
+    }, false);
   }
   textAreaChangeHandler(e) {
     this.setState({
@@ -40,6 +50,9 @@ class Write extends Component {
       console.log('按了enter键：', e.target.value);
       if (e.target.value) {
         dispatch(searchTags(e.target.value.split(',').join('|')));
+        this.setState({
+          searchTagShow: true
+        });
       }
     }
   }
@@ -54,7 +67,6 @@ class Write extends Component {
       choosenTags: this.state.choosenTags
     });
     searchTagsArr.splice(index, 1);
-    console.log(this.tagInput, this.tagInput.refs.input.value);
     this.tagInput.refs.input.value = '';
   }
   renderMD(md) {
@@ -109,6 +121,7 @@ class Write extends Component {
           </li>
         );
       }
+      return item;
     });
     const TagsDom = this.state.choosenTags.map(item =>
       (
@@ -141,14 +154,20 @@ class Write extends Component {
                 placeholder="请输入标签"
                 className="tag-input"
                 onKeyPress={(e) => this.tagInputKeyPress(e)}
-                ref={(ref) => this.tagInput = ref}
+                ref={(ref) => { this.tagInput = ref; }}
               />
               <div
                 className="ant-select-dropdown dropdown-write-tags"
-                style={{ display: searchTagsArr.length > 0 ? 'block' : 'none' }}
+                style={{ display: this.state.searchTagShow > 0 ? 'block' : 'none' }}
               >
                 <ul className="ant-select-dropdown-menu write-tags">
                   {dropdownDom}
+                  <li
+                    key="createTag"
+                    className="ant-select-dropdown-menu-item"
+                  >
+                    创建该标签
+                  </li>
                 </ul>
               </div>
             </div>

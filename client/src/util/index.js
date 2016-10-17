@@ -95,3 +95,18 @@ export {
   debounce,
   throttle
 };
+// el:获取的元素，selector：元素id或者class的字符串
+export function closest(el, selector) {
+  let elTmp = el;
+  const matchesSelector = elTmp.matches ||
+                          elTmp.webkitMatchesSelector ||
+                          elTmp.mozMatchesSelector ||
+                          elTmp.msMatchesSelector;
+  while (elTmp) {
+    if (matchesSelector.call(elTmp, selector)) {
+      return elTmp;
+    }
+    elTmp = elTmp.parentElement;
+  }
+  return null;
+}
