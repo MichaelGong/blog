@@ -21,8 +21,7 @@ class Write extends Component {
     super(props);
     this.state = {
       md: '# sadfa',
-      choosenTags: [],
-      tagsList: []
+      choosenTags: []
     };
   }
   componentDidMount() {
@@ -41,27 +40,24 @@ class Write extends Component {
       console.log('按了enter键：', e.target.value);
       if (e.target.value) {
         dispatch(searchTags(e.target.value.split(',').join('|')));
-        // this.setState({
-        //   tagsList: [
-        //     { id: 1, name: '胜多负少', isShow: true },
-        //     { id: 2, name: '发光时代水电费', isShow: true },
-        //     { id: 3, name: '合法固定', isShow: true }
-        //   ]
-        // });
       }
     }
   }
   handleChange(value) {
     console.log(`selected ${value}`);
   }
-  chooseTagItem(item) {
+  // 选中某一个标签
+  chooseTagItem(item, index) {
+    const { searchTagsArr } = this.props;
     this.state.choosenTags.push(item);
     this.setState({
       choosenTags: this.state.choosenTags
     });
+    searchTagsArr.splice(index, 1);
+    console.log(this.tagInput, this.tagInput.refs.input.value);
+    this.tagInput.refs.input.value = '';
   }
   renderMD(md) {
-    console.log('--------------------------------------');
     if ($('#editormd').length > 0) {
       $('#editormd').html('');
       editormd().markdownToHTML('editormd', {
@@ -74,21 +70,46 @@ class Write extends Component {
   }
   render() {
     const id = '_id';
+    const self = this;
     const { searchTagsArr } = this.props;
     const tagColorArr = ['blue', 'green', 'yellow', 'red'];
     let textAreaHeight = document.body.clientHeight - 200;
     // 搜索出来的标签数组
-    const dropdownDom = searchTagsArr.map(item =>
-      (
-      <li
-        key={item[id]}
-        className="ant-select-dropdown-menu-item"
-        onClick={() => this.chooseTagItem(item)}
-      >
-        {item.name}
-      </li>
-      )
-    );
+    const dropdownDom = searchTagsArr.map((item, index) => {
+      if (self.state.choosenTags.length === 0) {
+        return (
+          <li
+            key={item[id]}
+            className="ant-select-dropdown-menu-item"
+            onClick={() => this.chooseTagItem(item, index)}
+          >
+            {item.name}
+          </li>
+        );
+      }
+      for (let i = 0; i < self.state.choosenTags.length; i++) {
+        let choosenItem = self.state.choosenTags[i];
+        if (item[id] === choosenItem[id]) {
+          return (
+            <li
+              key={item[id]}
+              className="ant-select-dropdown-menu-item isChoosen"
+            >
+              {item.name}
+            </li>
+          );
+        }
+        return (
+          <li
+            key={item[id]}
+            className="ant-select-dropdown-menu-item"
+            onClick={() => this.chooseTagItem(item, index)}
+          >
+            {item.name}
+          </li>
+        );
+      }
+    });
     const TagsDom = this.state.choosenTags.map(item =>
       (
       <Tag closable color={tagColorArr[random(0, 3)]} key={item[id]}>{item.name}</Tag>
@@ -120,6 +141,7 @@ class Write extends Component {
                 placeholder="请输入标签"
                 className="tag-input"
                 onKeyPress={(e) => this.tagInputKeyPress(e)}
+                ref={(ref) => this.tagInput = ref}
               />
               <div
                 className="ant-select-dropdown dropdown-write-tags"
