@@ -70,10 +70,6 @@ class Write extends Component {
   render() {
     const tagColorArr = ['blue', 'green', 'yellow', 'red'];
     let textAreaHeight = document.body.clientHeight - 200;
-    // <Tag closable color={tagColorArr[random(0, 3)]}>蓝色</Tag>
-    //           <Tag closable color={tagColorArr[random(0, 3)]}>绿色</Tag>
-    //           <Tag closable color={tagColorArr[random(0, 3)]}>黄色</Tag>
-    //           <Tag closable color={tagColorArr[random(0, 3)]}>红色</Tag>
     const dropdownDom = this.state.tagsList.map(item =>
       (
       <li

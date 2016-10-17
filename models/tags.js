@@ -35,6 +35,18 @@ var Tags = {
         cb(null);
       }).catch(cb);
     }).catch(cb);
+  },
+  searchTag: function(tags, cb) {
+    dbUtil(collectionName).then(obj => {
+      obj.collection.find({
+        name: { $regex: tags }
+      }).toArray().
+      then((data) => {
+        obj.db.close();
+        cb(data);
+      }).
+      catch(cb);
+    }).catch(cb);
   }
 };
 
