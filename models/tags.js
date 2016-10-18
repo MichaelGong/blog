@@ -48,6 +48,16 @@ var Tags = {
       }).
       catch(cb);
     }).catch(cb);
+  },
+  // 根据name搜索tag
+  findTag: function(name, cb) {
+    dbUtil(collectionName).then(obj => {
+      obj.collection.findOne({
+        name: name
+      }).then(result => {
+        cb(result);
+      }).catch(cb);
+    }).catch(cb);
   }
 };
 

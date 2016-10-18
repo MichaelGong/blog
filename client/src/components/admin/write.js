@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { Form, Input, Row, Col, Select, Tag } from 'antd';
 import { random, closest } from '../../util';
 import {
@@ -22,20 +23,24 @@ class Write extends Component {
     this.state = {
       md: '# sadfa',
       choosenTags: [],
-      searchTagShow: false
+      searchTagShow: false,
+      createTagShow: false
     };
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
   componentDidMount() {
-    let self = this;
     this.renderMD(this.state.md);
-    document.querySelector('body').addEventListener('click', function(e) {
-      console.log(e.target);
-      if (!closest(e.target, '.ant-select-dropdown-menu.write-tags')) {
-        self.setState({
-          searchTagShow: false
-        });
-      }
-    }, false);
+    document.querySelector('body').addEventListener('click', this.closeTagSearch.bind(this), false);
+  }
+  componentWillUnmount() {
+    document.querySelector('body').removeEventListener('click', this.closeTagSearch.bind(this));
+  }
+  closeTagSearch(e) {
+    if (!closest(e.target, '.ant-select-dropdown-menu.write-tags, .tags-container')) {
+      this.setState({
+        searchTagShow: false
+      });
+    }
   }
   textAreaChangeHandler(e) {
     this.setState({
@@ -68,7 +73,21 @@ class Write extends Component {
     });
     searchTagsArr.splice(index, 1);
     this.tagInput.refs.input.value = '';
+    this.forceUpdate(); // 强制更新 choosenTags是个数组
   }
+  // 删除选中的tag
+  delChoosenTag(tagId) {
+    let id = '_id';
+    this.setState({
+      choosenTags: this.state.choosenTags.filter(item => {
+        if (item[id] === tagId) {
+          return false;
+        }
+        return true;
+      })
+    });
+  }
+  // 生成markdown
   renderMD(md) {
     if ($('#editormd').length > 0) {
       $('#editormd').html('');
@@ -123,9 +142,30 @@ class Write extends Component {
       }
       return item;
     });
+
+    const dropdownDomWithCreate = () => {
+      if (searchTags.length === 0 && this.tagInput.refs.input.value) {
+        return (
+          <li
+            key="createTag"
+            className="ant-select-dropdown-menu-item"
+          >
+            创建该标签
+          </li>
+        );
+      }
+      return '';
+    };
     const TagsDom = this.state.choosenTags.map(item =>
       (
-      <Tag closable color={tagColorArr[random(0, 3)]} key={item[id]}>{item.name}</Tag>
+      <Tag
+        key={item[id]}
+        closable
+        color={tagColorArr[random(0, 3)]}
+        afterClose={() => this.delChoosenTag(item[id])}
+      >
+        {item.name}
+      </Tag>
       )
     );
     return (
@@ -163,6 +203,10 @@ class Write extends Component {
                 <ul className="ant-select-dropdown-menu write-tags">
                   {dropdownDom}
                   <li
+                    style={{
+                      display: (searchTagsArr.length > 0) ?
+                        'none' : 'inline-block'
+                    }}
                     key="createTag"
                     className="ant-select-dropdown-menu-item"
                   >
