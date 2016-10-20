@@ -1,10 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { Form, Input, Row, Col, Select, Tag } from 'antd';
+import { Form, Input, Row, Col, Select, Tag, message, Button, Upload, Icon } from 'antd';
 import { random, closest } from '../../util';
 import {
-  searchTags
+  searchTagsAction,
+  addTagsAction,
+  emptyAddTagsAction
 } from '../../actions/tags';
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
@@ -27,15 +29,32 @@ class Write extends Component {
       createTagShow: false
     };
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+    this.closeTagSearch = this.closeTagSearch.bind(this);
   }
   componentDidMount() {
+    console.log('write.js: componentDidMount');
     this.renderMD(this.state.md);
-    document.querySelector('body').addEventListener('click', this.closeTagSearch.bind(this), false);
+    window.addEventListener('click', this.closeTagSearch, false);
+  }
+  componentDidUpdate() {
+    const { dispatch, addTags } = this.props;
+    if (addTags) {
+      if (+addTags.code === 200) {
+        message.success('标签创建成功！');
+        dispatch(searchTagsAction(this.tagInput.refs.input.value.split(',').join('|')));
+      } else {
+        message.error(addTags.message);
+      }
+      dispatch(emptyAddTagsAction());
+    }
   }
   componentWillUnmount() {
-    document.querySelector('body').removeEventListener('click', this.closeTagSearch.bind(this));
+    console.log('write.js: componentWillUnmount');
+    window.removeEventListener('click', this.closeTagSearch, false);
   }
+  // 关闭搜索框
   closeTagSearch(e) {
+    console.log(e);
     if (!closest(e.target, '.ant-select-dropdown-menu.write-tags, .tags-container')) {
       this.setState({
         searchTagShow: false
@@ -54,7 +73,7 @@ class Write extends Component {
     if (e.key === 'Enter' || e.charCode === '13') { // 监听enter键
       console.log('按了enter键：', e.target.value);
       if (e.target.value) {
-        dispatch(searchTags(e.target.value.split(',').join('|')));
+        dispatch(searchTagsAction(e.target.value.split(',').join('|')));
         this.setState({
           searchTagShow: true
         });
@@ -85,6 +104,15 @@ class Write extends Component {
         }
         return true;
       })
+    });
+  }
+  // 创建标签
+  createTag() {
+    if (!this.tagInput.refs.input.value) return;
+    const { dispatch } = this.props;
+    dispatch(addTagsAction(this.tagInput.refs.input.value.split(',')));
+    this.setState({
+      createTagShow: false
     });
   }
   // 生成markdown
@@ -142,20 +170,6 @@ class Write extends Component {
       }
       return item;
     });
-
-    const dropdownDomWithCreate = () => {
-      if (searchTags.length === 0 && this.tagInput.refs.input.value) {
-        return (
-          <li
-            key="createTag"
-            className="ant-select-dropdown-menu-item"
-          >
-            创建该标签
-          </li>
-        );
-      }
-      return '';
-    };
     const TagsDom = this.state.choosenTags.map(item =>
       (
       <Tag
@@ -168,6 +182,23 @@ class Write extends Component {
       </Tag>
       )
     );
+    const props = {
+      name: 'file',
+      action: '/upload.do',
+      headers: {
+        authorization: 'authorization-text'
+      },
+      onChange(info) {
+        if (info.file.status !== 'uploading') {
+          console.log(info.file, info.fileList);
+        }
+        if (info.file.status === 'done') {
+          message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    };
     return (
       <div>
         <Row gutter={16}>
@@ -187,7 +218,7 @@ class Write extends Component {
               </Select>
             </FormItem>
           </Col>
-          <Col xs={24} sm={12}>
+          <Col xs={18} sm={9}>
             <div className="tags-container">
               {TagsDom}
               <Input
@@ -198,23 +229,30 @@ class Write extends Component {
               />
               <div
                 className="ant-select-dropdown dropdown-write-tags"
-                style={{ display: this.state.searchTagShow > 0 ? 'block' : 'none' }}
+                style={{ display: this.state.searchTagShow ? 'block' : 'none' }}
               >
                 <ul className="ant-select-dropdown-menu write-tags">
                   {dropdownDom}
                   <li
                     style={{
-                      display: (searchTagsArr.length > 0) ?
-                        'none' : 'inline-block'
+                      display: (searchTagsArr.length > 0) ? 'none' : 'inline-block'
                     }}
                     key="createTag"
                     className="ant-select-dropdown-menu-item"
+                    onClick={() => this.createTag()}
                   >
                     创建该标签
                   </li>
                 </ul>
               </div>
             </div>
+          </Col>
+          <Col xs={6} sm={3}>
+            <Upload {...props}>
+              <Button type="ghost" size="large">
+                <Icon type="upload" /> 上传图片
+              </Button>
+            </Upload>
           </Col>
         </Row>
         <Row style={{ marginTop: 10, height: textAreaHeight }}>
@@ -239,11 +277,16 @@ class Write extends Component {
 
 function mapToState(state) {
   return {
-    searchTagsArr: state.tags.searchTags // 搜索出来的标签数组
+    searchTagsArr: state.tags.searchTags, // 搜索出来的标签数组
+    addTags: state.tags.addTags
   };
 }
 Write.propTypes = {
   dispatch: PropTypes.func,
-  searchTagsArr: PropTypes.array
+  searchTagsArr: PropTypes.array,
+  addTags: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
+  ])
 };
 export default connect(mapToState)(Write);

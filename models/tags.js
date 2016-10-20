@@ -26,11 +26,14 @@ var Tags = {
     }).catch(cb);
   },
   // 添加标签
-  addTag: function(name, cb) {
+  addTag: function(nameArr, cb) {
+    let arrTmp = nameArr.map(item => {
+      let obj = {};
+      obj.name = item;
+      return obj;
+    });
     dbUtil(collectionName).then(obj => {
-      obj.collection.insert({
-        name: name
-      }).then(() => {
+      obj.collection.insertMany(arrTmp).then(() => {
         obj.db.close();
         cb(null);
       }).catch(cb);
