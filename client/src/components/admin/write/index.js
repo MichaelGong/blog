@@ -1,13 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { Form, Input, Row, Col, Select, Tag, message, Button, Upload, Icon } from 'antd';
-import { random, closest } from '../../util';
+import { Form, Input, Row, Col, Select, Tag, message } from 'antd';
+import UploadFile from './uploadFile';
+import { random, closest, isArray } from '../../../util';
 import {
   searchTagsAction,
   addTagsAction,
   emptyAddTagsAction
-} from '../../actions/tags';
+} from '../../../actions/tags';
+import {
+  categoryAction
+} from '../../../actions/navBar';
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
 /* eslint-disable */
@@ -28,11 +32,14 @@ class Write extends Component {
       searchTagShow: false,
       createTagShow: false
     };
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+    // this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
     this.closeTagSearch = this.closeTagSearch.bind(this);
   }
+  componentWillMount() {
+    const { dispatch } = this.props;
+    dispatch(categoryAction(true));
+  }
   componentDidMount() {
-    console.log('write.js: componentDidMount');
     this.renderMD(this.state.md);
     window.addEventListener('click', this.closeTagSearch, false);
   }
@@ -49,12 +56,25 @@ class Write extends Component {
     }
   }
   componentWillUnmount() {
-    console.log('write.js: componentWillUnmount');
     window.removeEventListener('click', this.closeTagSearch, false);
+  }
+  // 获取上传的图片列表
+  getUpImgList(imgArr) {
+    let str = '';
+    let editor = document.querySelector('#textarea-editor');
+    let md = this.state.md;
+    imgArr.forEach(item => {
+      str += `![](${item.url})\r\n`;
+    });
+    str = md.substring(0, editor.selectionStart)
+          + '\r\n' + str + '\r\n' + md.substring(editor.selectionEnd);
+    this.setState({
+      md: str
+    });
+    this.renderMD(str);
   }
   // 关闭搜索框
   closeTagSearch(e) {
-    console.log(e);
     if (!closest(e.target, '.ant-select-dropdown-menu.write-tags, .tags-container')) {
       this.setState({
         searchTagShow: false
@@ -71,7 +91,6 @@ class Write extends Component {
   tagInputKeyPress(e) {
     const { dispatch } = this.props;
     if (e.key === 'Enter' || e.charCode === '13') { // 监听enter键
-      console.log('按了enter键：', e.target.value);
       if (e.target.value) {
         dispatch(searchTagsAction(e.target.value.split(',').join('|')));
         this.setState({
@@ -130,7 +149,7 @@ class Write extends Component {
   render() {
     const id = '_id';
     const self = this;
-    const { searchTagsArr } = this.props;
+    const { searchTagsArr, category } = this.props;
     const tagColorArr = ['blue', 'green', 'yellow', 'red'];
     let textAreaHeight = document.body.clientHeight - 200;
     // 搜索出来的标签数组
@@ -182,23 +201,20 @@ class Write extends Component {
       </Tag>
       )
     );
-    const props = {
-      name: 'file',
-      action: '/upload.do',
-      headers: {
-        authorization: 'authorization-text'
-      },
-      onChange(info) {
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
-        }
-        if (info.file.status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-          message.error(`${info.file.name} file upload failed.`);
-        }
-      },
-    };
+    // console.log(category);
+    let selectDom = [<Option key="disabled" value="" disabled selected="selected">-请选择分类-</Option>];
+    if (isArray(category)) {
+      selectDom = selectDom.concat(category.map(item =>
+        (
+        <Option
+          key={item[id]}
+          value={item[id]}
+        >
+          {item.name}
+        </Option>
+        )
+      ));
+    }
     return (
       <div>
         <Row gutter={16}>
@@ -210,11 +226,7 @@ class Write extends Component {
           <Col xs={12} sm={6}>
             <FormItem style={{ marginBottom: 8 }}>
               <Select style={{ width: '100%' }} defaultValue="">
-                <Option value="" disabled selected="selected">--请选择分类--</Option>
-                <Option value="jack">jack</Option>
-                <Option value="lucy">lucy</Option>
-                <Option value="sdfsdf">sfsdf</Option>
-                <Option value="yiminghe">yiminghe</Option>
+                {selectDom}
               </Select>
             </FormItem>
           </Col>
@@ -248,16 +260,13 @@ class Write extends Component {
             </div>
           </Col>
           <Col xs={6} sm={3}>
-            <Upload {...props}>
-              <Button type="ghost" size="large">
-                <Icon type="upload" /> 上传图片
-              </Button>
-            </Upload>
+            <UploadFile getUpImgList={(imgArr) => this.getUpImgList(imgArr)} />
           </Col>
         </Row>
         <Row style={{ marginTop: 10, height: textAreaHeight }}>
           <Col xs={24} sm={12} style={{ height: '100%' }}>
             <textarea
+              id="textarea-editor"
               className="textarea-editor"
               value={this.state.md}
               onChange={(e) => this.textAreaChangeHandler(e)}
@@ -278,13 +287,18 @@ class Write extends Component {
 function mapToState(state) {
   return {
     searchTagsArr: state.tags.searchTags, // 搜索出来的标签数组
-    addTags: state.tags.addTags
+    addTags: state.tags.addTags,
+    category: state.navBar.category
   };
 }
 Write.propTypes = {
   dispatch: PropTypes.func,
   searchTagsArr: PropTypes.array,
   addTags: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
+  ]),
+  category: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.array
   ])

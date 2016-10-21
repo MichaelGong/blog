@@ -34,7 +34,7 @@ export function resetUpdateInfo() {
 }
 
 // 获取七牛uptoken
-export function getUpToken() {
+export function getUpTokenAction() {
   return dispatch => {
     dispatch({ type: 'BEGIN_GET_UPTOKEN' });
     return fetch(apis.getUpToken).then(response => response.json()).
