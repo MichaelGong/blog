@@ -16,7 +16,8 @@ import {
   categoryAction
 } from '../../../actions/navBar';
 import {
-  saveArticleAction
+  saveArticleAction,
+  emptySaveArticleAction
 } from '../../../actions/article';
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
@@ -51,7 +52,7 @@ class Write extends Component {
     window.addEventListener('click', this.closeTagSearch, false);
   }
   componentDidUpdate() {
-    const { dispatch, addTags } = this.props;
+    const { dispatch, addTags, saveArticle } = this.props;
     if (addTags) {
       if (+addTags.code === 200) {
         message.success('标签创建成功！');
@@ -61,17 +62,32 @@ class Write extends Component {
       }
       dispatch(emptyAddTagsAction());
     }
+    if (saveArticle) {
+      if (saveArticle.code === 200) {
+        message.success('提交成功！');
+      } else {
+        message.error(saveArticle.message);
+      }
+      dispatch(emptySaveArticleAction());
+    }
   }
   componentWillUnmount() {
     window.removeEventListener('click', this.closeTagSearch, false);
   }
-  // 监听文字内容的改变
+  // 监听title文字内容的改变
   onTitleChange(e) {
-    console.log(e.target.value);
+    this.setState({
+      title: e.target.value
+    });
   }
   // 监听选择分类
-  onCategoryChange(value, option) {
-    console.log(value, option);
+  onCategoryChange(value) {
+    let valueObj = JSON.parse(value);
+    let id = '_id';
+    this.setState({
+      categoryId: valueObj[id],
+      categoryName: valueObj.name
+    });
     // console.log(e.target.value, item);
   }
   // 获取上传的图片列表
@@ -154,7 +170,8 @@ class Write extends Component {
       title: this.state.title,
       content: this.state.md,
       tags: this.state.choosenTags,
-      // categoryId: 
+      categoryId: this.state.categoryId,
+      categoryName: this.state.categoryName
     }));
   }
   // 生成markdown
@@ -231,7 +248,7 @@ class Write extends Component {
         (
         <Option
           key={item[id]}
-          value={item[id]}
+          value={JSON.stringify(item)}
         >
           {item.name}
         </Option>
@@ -255,7 +272,7 @@ class Write extends Component {
               <Select
                 style={{ width: '100%' }}
                 defaultValue=""
-                onSelect={(value, option) => this.onCategoryChange(value, option)}
+                onChange={(value) => this.onCategoryChange(value)}
               >
                 {selectDom}
               </Select>
@@ -328,7 +345,8 @@ function mapToState(state) {
   return {
     searchTagsArr: state.tags.searchTags, // 搜索出来的标签数组
     addTags: state.tags.addTags,
-    category: state.navBar.category
+    category: state.navBar.category,
+    saveArticle: state.article.saveArticle // 保存文章的返回值
   };
 }
 Write.propTypes = {
@@ -341,6 +359,7 @@ Write.propTypes = {
   category: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.array
-  ])
+  ]),
+  saveArticle: PropTypes.object
 };
 export default connect(mapToState)(Write);

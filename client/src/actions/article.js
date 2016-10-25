@@ -78,8 +78,18 @@ export function saveArticleAction(data) {
     then(json => {
       dispatch({ type: 'SAVE_ARTICLE_SUCCESS', data: json });
     }).
-    catch(json => {
-      dispatch({ type: 'SAVE_ARTICLE_ERROR', data: json });
+    catch(() => {
+      dispatch({
+        type: 'SAVE_ARTICLE_ERROR',
+        data: {
+          code: 500,
+          message: '请求失败！'
+        }
+      });
     });
   };
+}
+// 清空 SAVE_ARTICLE_SUCCESS
+export function emptySaveArticleAction() {
+  return dispatch => dispatch({ type: 'SAVE_ARTICLE_SUCCESS', data: null });
 }

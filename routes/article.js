@@ -57,12 +57,13 @@ router.post('/add', function(req, res) {
     title: req.body.title,
     content: req.body.content,
     img: req.body.img,
-    tags: JSON.parse(req.body.tags),
+    tags: req.body.tags,
     createTime: timeStamp,
     updateTime: null,
     readNum: 0,
     commentNum: 0,
-    categoryId: req.body.categoryId
+    categoryId: req.body.categoryId,
+    categoryName: req.body.categoryName
   });
   article.add(function(err) {
     if (err) {

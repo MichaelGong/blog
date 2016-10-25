@@ -3,6 +3,7 @@ var objectId = require('mongodb').ObjectId;
 var collectionName = 'article';
 
 function Article(article) {
+  console.log(article);
   this.title = article.title;
   this.content = article.content;
   this.img = article.img;
@@ -12,6 +13,7 @@ function Article(article) {
   this.readNum = article.readNum;
   this.commentNum = article.commentNum;
   this.categoryId = article.categoryId;
+  this.categoryName = article.categoryName;
 }
 // 获取所有文章
 Article.getAll = function(categoryid, tagid, cb) {
@@ -99,7 +101,8 @@ Article.prototype.add = function(cb) {
     updateTime: self.updateTime,
     readNum: self.readNum,
     commentNum: self.commentNum,
-    categoryId: self.categoryId
+    categoryId: self.categoryId,
+    categoryName: self.categoryName
   };
   dbUtil(collectionName).then((obj) => {
     obj.collection.insert(article).
