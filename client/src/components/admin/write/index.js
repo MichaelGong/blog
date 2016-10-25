@@ -1,7 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import {
+  LinkedStateMixin
+} from 'react-addons';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { Form, Input, Row, Col, Select, Tag, message } from 'antd';
+import { Form, Input, Row, Col, Select, Tag, message, Button } from 'antd';
 import UploadFile from './uploadFile';
 import { random, closest, isArray } from '../../../util';
 import {
@@ -12,6 +15,9 @@ import {
 import {
   categoryAction
 } from '../../../actions/navBar';
+import {
+  saveArticleAction
+} from '../../../actions/article';
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
 /* eslint-disable */
@@ -32,7 +38,8 @@ class Write extends Component {
       searchTagShow: false,
       createTagShow: false
     };
-    // this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+    this.linkState = LinkedStateMixin.linkState.bind(this);
     this.closeTagSearch = this.closeTagSearch.bind(this);
   }
   componentWillMount() {
@@ -57,6 +64,15 @@ class Write extends Component {
   }
   componentWillUnmount() {
     window.removeEventListener('click', this.closeTagSearch, false);
+  }
+  // 监听文字内容的改变
+  onTitleChange(e) {
+    console.log(e.target.value);
+  }
+  // 监听选择分类
+  onCategoryChange(value, option) {
+    console.log(value, option);
+    // console.log(e.target.value, item);
   }
   // 获取上传的图片列表
   getUpImgList(imgArr) {
@@ -99,9 +115,6 @@ class Write extends Component {
       }
     }
   }
-  handleChange(value) {
-    console.log(`selected ${value}`);
-  }
   // 选中某一个标签
   chooseTagItem(item, index) {
     const { searchTagsArr } = this.props;
@@ -133,6 +146,16 @@ class Write extends Component {
     this.setState({
       createTagShow: false
     });
+  }
+  // 提交数据
+  submitArticle() {
+    const { dispatch } = this.props;
+    dispatch(saveArticleAction({
+      title: this.state.title,
+      content: this.state.md,
+      tags: this.state.choosenTags,
+      // categoryId: 
+    }));
   }
   // 生成markdown
   renderMD(md) {
@@ -216,16 +239,24 @@ class Write extends Component {
       ));
     }
     return (
-      <div>
+      <div className="clearfix">
         <Row gutter={16}>
           <Col xs={12} sm={6}>
             <FormItem style={{ marginBottom: 8 }}>
-              <Input placeholder="请输入文章标题" style={{ width: '100%' }} />
+              <Input
+                placeholder="请输入文章标题"
+                style={{ width: '100%' }}
+                onChange={(e) => this.onTitleChange(e)}
+              />
             </FormItem>
           </Col>
           <Col xs={12} sm={6}>
             <FormItem style={{ marginBottom: 8 }}>
-              <Select style={{ width: '100%' }} defaultValue="">
+              <Select
+                style={{ width: '100%' }}
+                defaultValue=""
+                onSelect={(value, option) => this.onCategoryChange(value, option)}
+              >
                 {selectDom}
               </Select>
             </FormItem>
@@ -279,6 +310,15 @@ class Write extends Component {
             </div>
           </Col>
         </Row>
+        <Button
+          type="primary"
+          size="large"
+          loading={this.state.iconLoading}
+          onClick={() => this.submitArticle()}
+          style={{ float: 'right', marginTop: 15 }}
+        >
+          保存提交
+        </Button>
       </div>
     );
   }

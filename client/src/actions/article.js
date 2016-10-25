@@ -57,3 +57,29 @@ export function deleteArticleByIdAction(articleId) {
 export function emptyDeleteArticleByIdAction() {
   return dispatch => dispatch({ type: 'DELETE_ARTICLE', data: null });
 }
+// 提交文章内容
+export function saveArticleAction(data) {
+  return dispatch => {
+    dispatch({ type: 'SAVE_ARTICLE_BEGIN' });
+    return fetch(apis.saveArticle, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: data.title,
+        content: data.content,
+        tags: data.tags,
+        categoryId: data.categoryId,
+        categoryName: data.categoryName
+      })
+    }).then(response => response.json()).
+    then(json => {
+      dispatch({ type: 'SAVE_ARTICLE_SUCCESS', data: json });
+    }).
+    catch(json => {
+      dispatch({ type: 'SAVE_ARTICLE_ERROR', data: json });
+    });
+  };
+}
