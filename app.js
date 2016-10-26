@@ -5,10 +5,11 @@ var path = require('path');
 var ejs = require('ejs');
 var fs = require('fs');
 var favicon = require('serve-favicon');
-// var settings = require('./settings');
-// var session = require('express-session');
+var settings = require('./settings');
+var session = require('express-session');
+var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-// var MongoStore = require('connect-mongo')(session);
+var MongoStore = require('connect-mongo')(session);
 var DashboardPlugin = require('webpack-dashboard/plugin');
 
 var loggerFunc = require('./logger');
@@ -39,12 +40,25 @@ if (isDev) {
 
   app.use(webpackHotMiddleware(compiler));
 }
-
 // 设置views路径和模板
 app.set('views', './');
 app.set('view engine', 'html');
 app.engine('html', ejs.renderFile);
 
+app.use(cookieParser());
+app.use(session({
+  secret: settings.cookieSecret,
+  name: 'test',
+  cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 }, // 30天
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoStore({
+    // db: settings.db,
+    // host: settings.host,
+    // port: settings.port
+    url: 'mongodb://localhost/blog'
+  })
+}));
 
 app.use(favicon(path.join(__dirname, './favicon.ico')));
 // logger
@@ -53,6 +67,7 @@ loggerFunc(app);
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 // parse application/json
 app.use(bodyParser.json({ limit: '50mb' }));
+
 // 静态文件
 app.use('/client/dist', express.static(path.join(__dirname, 'client/dist')));
 // app.use('/', express.static(path.join(__dirname, '/')));
@@ -88,20 +103,6 @@ app.use(function(err, req, res, next) {
   });
   next();
 });
-
-
-// app.use(session({
-//   secret: settings.cookieSecret,
-//   key: settings.db,
-//   cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 }, // 30天
-//   store: new MongoStore({
-//     db: settings.db,
-//     host: settings.host,
-//     port: settings.port,
-//     url: 'mongodb://localhost/blog'
-//   })
-// }));
-
 
 // 启动服务器
 server = app.listen(8989, function() {

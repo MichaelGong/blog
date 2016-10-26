@@ -9,16 +9,20 @@ import './list.less';
 class ListApp extends Component {
   componentWillMount() {
     this.tag = 0; // 是否是第一次进来
-    this.getArticles(this.props.params.tagid);
+    this.getArticles(this.props.params.tagid || '');
   }
   // shouldComponentUpdate(nextProps) {
   //   console.log('shouldComponentUpdate', this.props.params.tagid, nextProps.params.tagid);
   //   return this.tag === 0 || this.props.params.tagid !== nextProps.params.tagid;
   // }
   componentWillUpdate(nextProps) { // 在初始化渲染的时候，该方法不会调用
+    const { dispatch } = this.props;
     if (this.props.params.tagid !== nextProps.params.tagid) {
       this.tag++;
       this.getArticles(nextProps.params.tagid);
+    }
+    if (this.props.params.categoryid !== nextProps.params.categoryid) {
+      dispatch(articleAllAction(nextProps.params.categoryid, nextProps.params.tagid || ''));
     }
   }
   getArticles(tagid) {

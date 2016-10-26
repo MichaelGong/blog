@@ -42,6 +42,7 @@ class Write extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
     this.linkState = LinkedStateMixin.linkState.bind(this);
     this.closeTagSearch = this.closeTagSearch.bind(this);
+    this.clearData = this.clearData.bind(this);
   }
   componentWillMount() {
     const { dispatch } = this.props;
@@ -65,6 +66,7 @@ class Write extends Component {
     if (saveArticle) {
       if (saveArticle.code === 200) {
         message.success('提交成功！');
+        this.clearData();
       } else {
         message.error(saveArticle.message);
       }
@@ -85,6 +87,7 @@ class Write extends Component {
     let valueObj = JSON.parse(value);
     let id = '_id';
     this.setState({
+      category: value,
       categoryId: valueObj[id],
       categoryName: valueObj.name
     });
@@ -104,6 +107,16 @@ class Write extends Component {
       md: str
     });
     this.renderMD(str);
+  }
+  clearData() {
+    this.setState({
+      title: '',
+      md: '',
+      choosenTags: [],
+      category: '',
+      categoryId: '',
+      categoryName: ''
+    });
   }
   // 关闭搜索框
   closeTagSearch(e) {
@@ -263,6 +276,7 @@ class Write extends Component {
               <Input
                 placeholder="请输入文章标题"
                 style={{ width: '100%' }}
+                value={this.state.title}
                 onChange={(e) => this.onTitleChange(e)}
               />
             </FormItem>
@@ -272,6 +286,7 @@ class Write extends Component {
               <Select
                 style={{ width: '100%' }}
                 defaultValue=""
+                value={this.state.category}
                 onChange={(value) => this.onCategoryChange(value)}
               >
                 {selectDom}

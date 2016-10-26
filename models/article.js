@@ -22,22 +22,22 @@ Article.getAll = function(categoryid, tagid, cb) {
     query = {
       tags: {
         $elemMatch: {
-          id: tagid
+          _id: tagid
         }
       },
-      categoryid: categoryid
+      categoryId: categoryid
     };
   } else if (tagid && !categoryid) {
     query = {
       tags: {
         $elemMatch: {
-          id: tagid
+          _id: tagid
         }
       }
     };
   } else if (!tagid && categoryid) {
     query = {
-      categoryid: categoryid
+      categoryId: categoryid
     };
   }
   dbUtil(collectionName).then((obj) => {
