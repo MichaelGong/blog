@@ -73,7 +73,13 @@ app.use('/client/dist', express.static(path.join(__dirname, 'client/dist')));
 // app.use('/', express.static(path.join(__dirname, '/')));
 
 app.use('/view', routes);
-
+app.use('/admin', function(req, res, next) {
+  if (req.session.userId) {
+     res.sendfile('./index.html');
+  } else {
+     res.redirect('/admin/login');
+  }
+});
 fs.readdirSync('./routes').forEach(function (filename) {
   var name;
   if (path.extname(filename) !== '.js') {

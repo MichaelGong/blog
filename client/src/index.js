@@ -8,6 +8,7 @@ import NavBar from './components/navBar';
 import ListApp from './components/list';
 import Detail from './components/detail';
 import MenuDOM from './components/admin/menu';
+import Login from './components/admin/login';
 import Info from './components/admin/info';
 import Category from './components/admin/category';
 import Tag from './components/admin/tag';
@@ -34,8 +35,10 @@ render((
           <Route path="/view/detail/:articleid" component={Detail} />
         </Route>
         {/* 管理后台 */}
-        <Route path="/view/admin" component={MenuDOM}>
-          <IndexRoute component={Info} />
+        <Route path="/admin" component={MenuDOM}>
+          <IndexRoute component={Login} />
+          <Route path="login" component={Login} />
+          <Route path="register" component={Login} />
           <Route path="info" component={Info} />
           <Route path="category" component={Category} />
           <Route path="tag" component={Tag} />
@@ -43,7 +46,7 @@ render((
           <Route path="write" component={Write} />
         </Route>
       </Router>
-      {devTool}
+      {/* devTool */}
     </div>
   </Provider>
 ), document.getElementById('app'));

@@ -48,19 +48,19 @@ class MenuDOM extends Component {
               <a className="navbar-logo" style={{ marginTop: '20px' }}></a>
             </Menu.Item>
             <Menu.Item key="info">
-              <Link to="/view/admin/info"><Icon type="solution" />基本信息</Link>
+              <Link to="/admin/info"><Icon type="solution" />基本信息</Link>
             </Menu.Item>
             <Menu.Item key="category">
-              <Link to="/view/admin/category"><Icon type="appstore" />类别管理</Link>
+              <Link to="/admin/category"><Icon type="appstore" />类别管理</Link>
             </Menu.Item>
             <Menu.Item key="tag">
-              <Link to="/view/admin/tag"><Icon type="tags" />标签管理</Link>
+              <Link to="/admin/tag"><Icon type="tags" />标签管理</Link>
             </Menu.Item>
             <Menu.Item key="article">
-              <Link to="/view/admin/article"><Icon type="file-text" />文章管理</Link>
+              <Link to="/admin/article"><Icon type="file-text" />文章管理</Link>
             </Menu.Item>
             <Menu.Item key="write">
-              <Link to="/view/admin/write">
+              <Link to="/admin/write">
                 <Icon type="code" />
                 来篇文章
               </Link>
