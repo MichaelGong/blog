@@ -42,10 +42,12 @@ class Login extends Component {
   }
   handleSubmit(e) {
     e.preventDefault();
-    this.props.form.validateFields((errors, values) => {
+    const { form } = this.props;
+    form.validateFields((errors, values) => {
       if (errors) {
         return;
       }
+      console.log(values);
     });
   }
   render() {

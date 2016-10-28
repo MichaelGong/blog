@@ -1,5 +1,5 @@
 var dbUtil = require('./dbUtil');
-var objectId = require('mongodb').objectId;
+// var objectId = require('mongodb').objectId;
 var collectionName = 'users';
 
 function Users(info) {
@@ -7,13 +7,14 @@ function Users(info) {
   this.userpassword = info.userpassword;
   this.canuse = false;
 }
-
+// 获取用户
 Users.getUsers = function(opts, cb) {
   dbUtil(collectionName).then(obj => {
-    obj.collection.find(opts).toArray().then(users => {
-      obj.db.close();
-      cb(null, users);
-    })
+    obj.collection.find(opts).project({ userpassword: 0 }).toArray()
+      .then(users => {
+        obj.db.close();
+        cb(null, users);
+      })
     .catch(cb);
   }).catch(cb);
 };
@@ -24,7 +25,7 @@ Users.prototype.create = function(cb) {
   var temp = {};
   var field = ['username', 'userpassword', 'canuse'];
   field.forEach(function(key) {
-    if (self[key]) {
+    if (self[key] !== 'undefined') {
       temp[key] = self[key];
     }
   });
@@ -35,4 +36,5 @@ Users.prototype.create = function(cb) {
     }).catch(cb);
   }).catch(cb);
 };
+
 module.exports = Users;

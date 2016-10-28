@@ -1,8 +1,12 @@
 var express = require('express');
 var router = express.Router();
+var crypto = require('crypto');
 var Users = require('../models/users');
 var errorCheck = require('../util').errorCheck;
 
+function md5(text) {
+  return crypto.createHash('md5').update(text + 'gh-blog').digest('hex');
+}
 // 获取用户数组
 router.get('/getusers', function(req, res) {
   let query = JSON.parse(req.query.search || '{}');
@@ -21,6 +25,34 @@ router.get('/getusers', function(req, res) {
     });
   });
 });
+
+// 校验用户名密码是否匹配
+router.post('/checkuser', (req, res) => {
+  let query = {
+    username: req.body.username,
+    userpassword: md5(req.body.userpassword)
+  };
+  Users.getUsers(query, (err, users) => {
+    if (err) {
+      res.json({
+        code: 500,
+        message: err.message,
+        data: err
+      });
+      return;
+    }
+    if (users.length > 0) {
+      res.json({
+        code: 200,
+        data: users
+      });
+    } else {
+      errorCheck(res, '用户名或密码错误', 500);
+    }
+  });
+});
+
+
 // 创建用户
 router.post('/createuser', function(req, res) {
   if (!req.body.username) {
@@ -31,7 +63,7 @@ router.post('/createuser', function(req, res) {
   }
   let user = new Users({
     username: req.body.username,
-    userpassword: req.body.userpassword
+    userpassword: md5(req.body.userpassword)
   });
 
   return Users.getUsers({
