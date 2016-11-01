@@ -73,11 +73,15 @@ app.use('/client/dist', express.static(path.join(__dirname, 'client/dist')));
 // app.use('/', express.static(path.join(__dirname, '/')));
 
 app.use('/view', routes);
+app.use('/admin/info', function(req, res) {
+  res.sendfile('./index.html');
+});
 app.use('/admin', function(req, res, next) {
+  console.log('================================', req.session.userId);
   if (req.session.userId) {
-     res.sendfile('./index.html');
+     res.redirect('/admin/info');
   } else {
-     res.redirect('/admin/login');
+     res.sendfile('./index.html');
   }
 });
 fs.readdirSync('./routes').forEach(function (filename) {

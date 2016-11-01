@@ -36,7 +36,6 @@ render((
         </Route>
         {/* 管理后台 */}
         <Route path="/admin" component={MenuDOM}>
-          <IndexRoute component={Login} />
           <Route path="login" component={Login} />
           <Route path="register" component={Login} />
           <Route path="info" component={Info} />

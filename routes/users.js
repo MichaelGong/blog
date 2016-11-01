@@ -32,6 +32,7 @@ router.post('/checkuser', (req, res) => {
     username: req.body.username,
     userpassword: md5(req.body.userpassword)
   };
+  let id = '_id';
   Users.getUsers(query, (err, users) => {
     if (err) {
       res.json({
@@ -41,12 +42,14 @@ router.post('/checkuser', (req, res) => {
       });
       return;
     }
-    if (users.length > 0) {
+    if (users.length > 0 && users[0].canuse) {
+      req.session.userId = users[0][id];
       res.json({
         code: 200,
         data: users
       });
     } else {
+      req.session.userId = null;
       errorCheck(res, '用户名或密码错误', 500);
     }
   });

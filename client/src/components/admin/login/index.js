@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Form, Input, Button, Row, Col } from 'antd';
+import { checkUser } from '../../../actions/users';
 import './login.less';
 const FormItem = Form.Item;
 
@@ -42,12 +43,12 @@ class Login extends Component {
   }
   handleSubmit(e) {
     e.preventDefault();
-    const { form } = this.props;
+    const { dispatch, form } = this.props;
     form.validateFields((errors, values) => {
       if (errors) {
         return;
       }
-      console.log(values);
+      dispatch(checkUser(values));
     });
   }
   render() {
@@ -66,7 +67,7 @@ class Login extends Component {
         message: '请输入用户名'
       }]
     });
-    const password = getFieldProps('password', {
+    const password = getFieldProps('userpassword', {
       rules: [{
         required: true,
         whitespace: false,
@@ -111,7 +112,7 @@ class Login extends Component {
               </FormItem>
               <FormItem
                 label="密&nbsp;&nbsp;&nbsp;&nbsp;码"
-                help={(getFieldError('password') || []).join(', ')}
+                help={(getFieldError('userpassword') || []).join(', ')}
                 {...formItemLayout}
               >
                 <Input
