@@ -87,18 +87,18 @@ app.use(session({
 app.use('/users', users);
 app.use('/admin', require('./admin'));
 
-// fs.readdirSync('./routes').forEach(function (filename) {
-//   var name;
-//   if (path.extname(filename) !== '.js') {
-//     return;
-//   }
-//   name = path.basename(filename, '.js');
-//   if (name === 'index') {
-//     return;
-//   }
-//   /* eslint global-require: 0 */
-//   app.use(`/${name}`, require(`./routes/${name}`));
-// });
+fs.readdirSync('./routes').forEach(function (filename) {
+  var name;
+  if (path.extname(filename) !== '.js') {
+    return;
+  }
+  name = path.basename(filename, '.js');
+  if (name === 'index') {
+    return;
+  }
+  /* eslint global-require: 0 */
+  app.use(`/${name}`, require(`./routes/${name}`));
+});
 
 // 404
 app.use(function(req, res, next) {

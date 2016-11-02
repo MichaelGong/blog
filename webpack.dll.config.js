@@ -34,12 +34,12 @@ module.exports = {
       filename: path.join(__dirname, './index.tpl'),
       template: path.join(__dirname, './index.tpl')
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
-      output: {
-        // 是否保留注释,默认为false
-        comments: false
-      }
-    })
+    // new webpack.optimize.UglifyJsPlugin({
+    //   minimize: true,
+    //   output: {
+    //     // 是否保留注释,默认为false
+    //     comments: false
+    //   }
+    // })
   ]
 };

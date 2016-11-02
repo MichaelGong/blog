@@ -10,6 +10,7 @@
 </head>
 <body>
 
-    <div id="app"></div>
-<script type="text/javascript" src="/client/dist/dll.vendor.js"></script><script type="text/javascript" src="./client/dist/dll.vendor.js"></script></body>
+  <div id="app"></div>
+  <script type="text/javascript" src="/client/dist/dll.vendor.js"></script>
+</body>
 </html>
