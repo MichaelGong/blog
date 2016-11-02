@@ -31,8 +31,8 @@ render((
         {/* 前段UI */}
         <Route path="/view" component={NavBar}>
           <IndexRoute component={ListApp} />
-          <Route path="/view/list(/:categoryid)(/:tagid)" component={ListApp} />
-          <Route path="/view/detail/:articleid" component={Detail} />
+          <Route path="list(/:categoryid)(/:tagid)" component={ListApp} />
+          <Route path="detail/:articleid" component={Detail} />
         </Route>
         {/* 管理后台 */}
         <Route path="/admin" component={MenuDOM}>

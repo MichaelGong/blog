@@ -28,6 +28,7 @@ router.get('/getusers', function(req, res) {
 
 // 校验用户名密码是否匹配
 router.post('/checkuser', (req, res) => {
+  console.log(req.session, '=======================');
   let query = {
     username: req.body.username,
     userpassword: md5(req.body.userpassword)
@@ -44,12 +45,15 @@ router.post('/checkuser', (req, res) => {
     }
     if (users.length > 0 && users[0].canuse) {
       req.session.userId = users[0][id];
+      console.log('checkuser:-------------------:', req.session);
       res.json({
         code: 200,
         data: users
       });
     } else {
+      console.log('----4');
       req.session.userId = null;
+      console.log('checkuser:-------------------:', req.session);
       errorCheck(res, '用户名或密码错误', 500);
     }
   });

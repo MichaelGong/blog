@@ -5,6 +5,7 @@ export function checkUser(data) {
     dispatch({ type: 'CHECK_USERS_BEGIN' });
     return fetch(apis.checkUser, {
       method: 'POST',
+      credentials: 'same-origin',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json'

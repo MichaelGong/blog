@@ -14,11 +14,19 @@ var DashboardPlugin = require('webpack-dashboard/plugin');
 
 var loggerFunc = require('./logger');
 var routes = require('./routes/index');
+// var article = require('./routes/article');
+// var category = require('./routes/category');
+// var info = require('./routes/info');
+// var tags = require('./routes/tags');
+// var uploadfile = require('./routes/uploadfile');
+var users = require('./routes/users');
 
 var server;
 
 var NODE_ENV = process.env.NODE_ENV || 'development';
 var isDev = NODE_ENV === 'development';
+
+var router = express.Router();
 
 // webpack打包
 if (isDev) {
@@ -40,25 +48,6 @@ if (isDev) {
 
   app.use(webpackHotMiddleware(compiler));
 }
-// 设置views路径和模板
-app.set('views', './');
-app.set('view engine', 'html');
-app.engine('html', ejs.renderFile);
-
-app.use(cookieParser());
-app.use(session({
-  secret: settings.cookieSecret,
-  name: 'test',
-  cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 }, // 30天
-  resave: false,
-  saveUninitialized: true,
-  store: new MongoStore({
-    // db: settings.db,
-    // host: settings.host,
-    // port: settings.port
-    url: 'mongodb://localhost/blog'
-  })
-}));
 
 app.use(favicon(path.join(__dirname, './favicon.ico')));
 // logger
@@ -72,30 +61,45 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use('/client/dist', express.static(path.join(__dirname, 'client/dist')));
 // app.use('/', express.static(path.join(__dirname, '/')));
 
-app.use('/view', routes);
-app.use('/admin/info', function(req, res) {
+// 设置views路径和模板
+app.set('views', './');
+app.set('view engine', 'html');
+app.engine('html', ejs.renderFile);
+
+app.use('/view', function(req, res) {
   res.sendfile('./index.html');
 });
-app.use('/admin', function(req, res, next) {
-  console.log('================================', req.session.userId);
-  if (req.session.userId) {
-     res.redirect('/admin/info');
-  } else {
-     res.sendfile('./index.html');
-  }
-});
-fs.readdirSync('./routes').forEach(function (filename) {
-  var name;
-  if (path.extname(filename) !== '.js') {
-    return;
-  }
-  name = path.basename(filename, '.js');
-  if (name === 'index') {
-    return;
-  }
-  /* eslint global-require: 0 */
-  app.use(`/${name}`, require(`./routes/${name}`));
-});
+
+app.use(cookieParser());
+app.use(session({
+  secret: settings.cookieSecret,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 }, // 30天
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoStore({
+    // db: settings.db,
+    // host: settings.host,
+    // port: settings.port
+    url: 'mongodb://localhost/blog'
+  })
+}));
+
+app.use('/users', users);
+app.use('/admin', require('./admin'));
+
+// fs.readdirSync('./routes').forEach(function (filename) {
+//   var name;
+//   if (path.extname(filename) !== '.js') {
+//     return;
+//   }
+//   name = path.basename(filename, '.js');
+//   if (name === 'index') {
+//     return;
+//   }
+//   /* eslint global-require: 0 */
+//   app.use(`/${name}`, require(`./routes/${name}`));
+// });
+
 // 404
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -111,7 +115,6 @@ app.use(function(err, req, res, next) {
     message: err.message,
     error: err
   });
-  next();
 });
 
 // 启动服务器

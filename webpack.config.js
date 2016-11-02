@@ -103,7 +103,7 @@ module.exports = {
       CodeMirror: 'CodeMirror'
     })
   ],
-  devtool: 'source-map'
+  devtool: 'source-map',
   // devServer: {
   //   host: '0.0.0.0',
   //   port: '3001',
