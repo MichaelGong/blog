@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import {
   Table,
   Icon,
@@ -85,6 +86,7 @@ class Article extends Component {
   }
   render() {
     let me = this;
+    let id = '_id';
     // 列
     const columns = [{
       title: '标题',
@@ -123,7 +125,11 @@ class Article extends Component {
           style={{ marginRight: 10 }}
           onClick={() => this.showDeleteArticleModal(record)}
         />
-        <Icon type="edit" className="cursor" />
+        <Link
+          to={`/admin/write?articleId=${record[id]}`}
+        >
+          <Icon type="edit" className="cursor" />
+        </Link>
       </span>
     }];
     // 多选框

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { getArticleById } from '../actions/article';
+import { getArticleByIdAction } from '../actions/article';
 import $ from 'jquery';
 import 'marked';
 import 'prettify';
@@ -18,7 +18,7 @@ class Detail extends Component {
   }
   componentWillMount() {
     const { dispatch, params } = this.props;
-    dispatch(getArticleById(params.articleid));
+    dispatch(getArticleByIdAction(params.articleid));
   }
   toggleTOC() {
     this.setState({

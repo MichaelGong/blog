@@ -17,7 +17,9 @@ import {
 } from '../../../actions/navBar';
 import {
   saveArticleAction,
-  emptySaveArticleAction
+  emptySaveArticleAction,
+  getArticleByIdAction,
+  emptyGetArticleByIdAction
 } from '../../../actions/article';
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
@@ -49,11 +51,16 @@ class Write extends Component {
     dispatch(categoryAction(true));
   }
   componentDidMount() {
+    console.log(this.props);
+    const { dispatch, location } = this.props;
+    if (location.query.articleId) {
+      dispatch(getArticleByIdAction(location.query.articleId));
+    }
     this.renderMD(this.state.md);
     window.addEventListener('click', this.closeTagSearch, false);
   }
   componentDidUpdate() {
-    const { dispatch, addTags, saveArticle } = this.props;
+    const { dispatch, addTags, saveArticle, articleDetail } = this.props;
     if (addTags) {
       if (+addTags.code === 200) {
         message.success('标签创建成功！');
@@ -72,6 +79,23 @@ class Write extends Component {
       }
       dispatch(emptySaveArticleAction());
     }
+
+    if (articleDetail) {
+      console.log(articleDetail);
+      this.setState({
+        title: articleDetail.title,
+        md: articleDetail.content,
+        categoryId: articleDetail.categoryId,
+        categoryName: articleDetail.categoryName,
+        category: {
+          _id: articleDetail.categoryId,
+          name: articleDetail.categoryName
+        },
+        choosenTags: articleDetail.tags
+      });
+      console.log(this.state);
+      dispatch(emptyGetArticleByIdAction());
+    }
   }
   componentWillUnmount() {
     window.removeEventListener('click', this.closeTagSearch, false);
@@ -84,14 +108,14 @@ class Write extends Component {
   }
   // 监听选择分类
   onCategoryChange(value) {
-    let valueObj = JSON.parse(value);
+    const { category } = this.props;
     let id = '_id';
     this.setState({
       category: value,
-      categoryId: valueObj[id],
-      categoryName: valueObj.name
+      categoryId: value,
+      categoryName: category.filter(item => item[id] === value).name
     });
-    // console.log(e.target.value, item);
+    console.log(value);
   }
   // 获取上传的图片列表
   getUpImgList(imgArr) {
@@ -205,6 +229,7 @@ class Write extends Component {
     const { searchTagsArr, category } = this.props;
     const tagColorArr = ['blue', 'green', 'yellow', 'red'];
     let textAreaHeight = document.body.clientHeight - 200;
+
     // 搜索出来的标签数组
     const dropdownDom = searchTagsArr.map((item, index) => {
       if (self.state.choosenTags.length === 0) {
@@ -261,7 +286,7 @@ class Write extends Component {
         (
         <Option
           key={item[id]}
-          value={JSON.stringify(item)}
+          value={item[id]}
         >
           {item.name}
         </Option>
@@ -286,7 +311,7 @@ class Write extends Component {
               <Select
                 style={{ width: '100%' }}
                 defaultValue=""
-                value={this.state.category}
+                value={this.state.categoryId}
                 onChange={(value) => this.onCategoryChange(value)}
               >
                 {selectDom}
@@ -361,7 +386,8 @@ function mapToState(state) {
     searchTagsArr: state.tags.searchTags, // 搜索出来的标签数组
     addTags: state.tags.addTags,
     category: state.navBar.category,
-    saveArticle: state.article.saveArticle // 保存文章的返回值
+    saveArticle: state.article.saveArticle, // 保存文章的返回值
+    articleDetail: state.article.articleDetail
   };
 }
 Write.propTypes = {
@@ -375,6 +401,8 @@ Write.propTypes = {
     PropTypes.object,
     PropTypes.array
   ]),
-  saveArticle: PropTypes.object
+  saveArticle: PropTypes.object,
+  location: PropTypes.object,
+  articleDetail: PropTypes.object
 };
 export default connect(mapToState)(Write);

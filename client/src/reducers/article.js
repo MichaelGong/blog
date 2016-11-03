@@ -7,7 +7,7 @@ const SAVE_ARTICLE_BEGIN = 'SAVE_ARTICLE_BEGIN';
 const SAVE_ARTICLE_SUCCESS = 'SAVE_ARTICLE_SUCCESS';
 const SAVE_ARTICLE_ERROR = 'SAVE_ARTICLE_ERROR';
 
-export default function(state = { allArticles: [], articleDetail: {} }, action = {}) {
+export default function(state = { allArticles: [] }, action = {}) {
   switch (action.type) {
     case BEGIN_GET_ARTICLE: {
       return {

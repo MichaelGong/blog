@@ -1,7 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Form, Input, Button, Row, Col } from 'antd';
-import { checkUser } from '../../../actions/users';
+import { Form, Input, Button, Row, Col, message } from 'antd';
+import {
+  checkUserAction,
+  emptyCheckuserAction,
+  registerUserAction,
+  emptyRegisterUserAction
+} from '../../../actions/users';
+import { browserHistory } from 'react-router';
 import './login.less';
 const FormItem = Form.Item;
 
@@ -17,6 +23,26 @@ class Login extends Component {
     };
     this.checkPassword = this.checkPassword.bind(this);
     this.checkRepeatPassword = this.checkRepeatPassword.bind(this);
+  }
+  componentDidUpdate() {
+    const { checkuser, registerUser, dispatch } = this.props;
+    if (checkuser) {
+      if (checkuser.code === 200) {
+        browserHistory.push('/admin/info');
+      } else {
+        message.error(checkuser.message);
+      }
+      dispatch(emptyCheckuserAction());
+    }
+    if (registerUser) {
+      console.log(registerUser);
+      if (registerUser.code === 200) {
+        message.success('注册成功，请等待管理员审核！');
+      } else {
+        message.error(registerUser.message);
+      }
+      dispatch(emptyRegisterUserAction());
+    }
   }
   // 设置是否是注册状态
   setRegister() {
@@ -35,12 +61,13 @@ class Login extends Component {
   // 检查重新输入密码
   checkRepeatPassword(rule, value, callback) {
     const { getFieldValue } = this.props.form;
-    if (value && value !== getFieldValue('password')) {
+    if (value && value !== getFieldValue('userpassword')) {
       callback('两次输入密码不一致！');
     } else {
       callback();
     }
   }
+  // 登录或者注册
   handleSubmit(e) {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -48,7 +75,11 @@ class Login extends Component {
       if (errors) {
         return;
       }
-      dispatch(checkUser(values));
+      if (!this.state.isRegister) {
+        dispatch(checkUserAction(values));
+      } else {
+        dispatch(registerUserAction(values));
+      }
     });
   }
   render() {
@@ -174,16 +205,16 @@ class Login extends Component {
 
 function mapToState(state) {
   return {
-    searchTagsArr: state.tags.searchTags, // 搜索出来的标签数组
-    addTags: state.tags.addTags,
-    category: state.navBar.category,
-    saveArticle: state.article.saveArticle // 保存文章的返回值
+    checkuser: state.users.checkuser, // 检查用户名密码是否合法返回值
+    registerUser: state.users.registerUser
   };
 }
 Login.propTypes = {
   dispatch: PropTypes.func,
   form: PropTypes.object.isRequired,
-  route: PropTypes.object
+  route: PropTypes.object,
+  checkuser: PropTypes.object,
+  registerUser: PropTypes.object
 };
 export default connect(mapToState)(Form.create()(Login));
 

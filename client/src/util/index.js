@@ -110,3 +110,36 @@ export function closest(el, selector) {
   }
   return null;
 }
+
+
+const fetchGet = function(url, data) {
+  let urlTmp = url + '?';
+  let keys;
+  if (data) {
+    keys = Object.keys(data);
+    keys.forEach((item) => {
+      urlTmp += item + '=' + data[item] + '&';
+    });
+  }
+  urlTmp = urlTmp.substring(0, urlTmp.length - 1);
+  return fetch(urlTmp, {
+    credentials: 'same-origin'
+  }).then(response => response.json());
+};
+const fetchPost = function(url, data) {
+  return fetch(url, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  }).then(response => response.json());
+};
+
+
+export {
+  fetchGet,
+  fetchPost
+};
