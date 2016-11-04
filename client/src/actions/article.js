@@ -81,3 +81,28 @@ export function saveArticleAction(data) {
 export function emptySaveArticleAction() {
   return dispatch => dispatch({ type: 'SAVE_ARTICLE_SUCCESS', data: null });
 }
+// 更新文章
+export function updateArticleAction(data) {
+  return dispatch => {
+    dispatch({ type: 'UPDATE_ARTICLE_BEGIN' });
+    return fetchPost(apis.updateArticle, data).
+      then(json => {
+        dispatch({ type: 'UPDATE_ARTICLE_END', data: json });
+      }).
+      catch(() => {
+        dispatch({
+          type: 'UPDATE_ARTICLE_ERROR',
+          data: {
+            code: 500,
+            message: '请求失败！'
+          }
+        });
+      });
+  };
+}
+
+// 清空 UPDATE_ARTICLE_END
+export function emptyUpdateArticleAction() {
+  return ({ type: 'UPDATE_ARTICLE_EMPTY', data: null });
+}
+

@@ -7,6 +7,11 @@ const SAVE_ARTICLE_BEGIN = 'SAVE_ARTICLE_BEGIN';
 const SAVE_ARTICLE_SUCCESS = 'SAVE_ARTICLE_SUCCESS';
 const SAVE_ARTICLE_ERROR = 'SAVE_ARTICLE_ERROR';
 
+const UPDATE_ARTICLE_BEGIN = 'UPDATE_ARTICLE_BEGIN';
+const UPDATE_ARTICLE_END = 'UPDATE_ARTICLE_END';
+const UPDATE_ARTICLE_ERROR = 'UPDATE_ARTICLE_ERROR';
+const UPDATE_ARTICLE_EMPTY = 'UPDATE_ARTICLE_EMPTY';
+
 export default function(state = { allArticles: [] }, action = {}) {
   switch (action.type) {
     case BEGIN_GET_ARTICLE: {
@@ -58,8 +63,23 @@ export default function(state = { allArticles: [] }, action = {}) {
     case SAVE_ARTICLE_ERROR: {
       return {
         ...state,
-        fetching: true,
+        fetching: false,
         saveArticle: action.data
+      };
+    }
+    case UPDATE_ARTICLE_BEGIN: {
+      return {
+        ...state,
+        fetching: true
+      };
+    }
+    case UPDATE_ARTICLE_END:
+    case UPDATE_ARTICLE_ERROR:
+    case UPDATE_ARTICLE_EMPTY: {
+      return {
+        ...state,
+        fetching: false,
+        updateArticle: action.data
       };
     }
     default:

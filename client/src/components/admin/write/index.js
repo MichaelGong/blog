@@ -19,7 +19,9 @@ import {
   saveArticleAction,
   emptySaveArticleAction,
   getArticleByIdAction,
-  emptyGetArticleByIdAction
+  emptyGetArticleByIdAction,
+  updateArticleAction,
+  emptyUpdateArticleAction
 } from '../../../actions/article';
 // import { Markdown, MarkdownEditor } from 'react-markdown2';
 import $ from 'jquery';
@@ -36,7 +38,7 @@ class Write extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      md: '# sadfa',
+      md: '',
       choosenTags: [],
       searchTagShow: false,
       createTagShow: false
@@ -51,7 +53,6 @@ class Write extends Component {
     dispatch(categoryAction(true));
   }
   componentDidMount() {
-    console.log(this.props);
     const { dispatch, location } = this.props;
     if (location.query.articleId) {
       dispatch(getArticleByIdAction(location.query.articleId));
@@ -60,7 +61,7 @@ class Write extends Component {
     window.addEventListener('click', this.closeTagSearch, false);
   }
   componentDidUpdate() {
-    const { dispatch, addTags, saveArticle, articleDetail } = this.props;
+    const { dispatch, addTags, saveArticle, articleDetail, updateArticle } = this.props;
     if (addTags) {
       if (+addTags.code === 200) {
         message.success('标签创建成功！');
@@ -81,20 +82,18 @@ class Write extends Component {
     }
 
     if (articleDetail) {
-      console.log(articleDetail);
-      this.setState({
-        title: articleDetail.title,
-        md: articleDetail.content,
-        categoryId: articleDetail.categoryId,
-        categoryName: articleDetail.categoryName,
-        category: {
-          _id: articleDetail.categoryId,
-          name: articleDetail.categoryName
-        },
-        choosenTags: articleDetail.tags
-      });
-      console.log(this.state);
+      this.setArticleDetail(articleDetail);
       dispatch(emptyGetArticleByIdAction());
+    }
+
+    if (updateArticle) {
+      if (+updateArticle.code === 200) {
+        message.success('文章更新成功！');
+        this.clearData();
+      } else {
+        message.error(updateArticle.message);
+      }
+      dispatch(emptyUpdateArticleAction());
     }
   }
   componentWillUnmount() {
@@ -115,7 +114,23 @@ class Write extends Component {
       categoryId: value,
       categoryName: category.filter(item => item[id] === value).name
     });
-    console.log(value);
+  }
+  // 文章详情初始化
+  setArticleDetail(articleDetail) {
+    const { location } = this.props;
+    this.setState({
+      articleId: location.query.articleId,
+      title: articleDetail.title,
+      md: articleDetail.content,
+      categoryId: articleDetail.categoryId,
+      categoryName: articleDetail.categoryName,
+      category: {
+        _id: articleDetail.categoryId,
+        name: articleDetail.categoryName
+      },
+      choosenTags: articleDetail.tags
+    });
+    this.renderMD(articleDetail.content);
   }
   // 获取上传的图片列表
   getUpImgList(imgArr) {
@@ -132,6 +147,7 @@ class Write extends Component {
     });
     this.renderMD(str);
   }
+  // 清空数据
   clearData() {
     this.setState({
       title: '',
@@ -141,6 +157,7 @@ class Write extends Component {
       categoryId: '',
       categoryName: ''
     });
+    this.renderMD('');
   }
   // 关闭搜索框
   closeTagSearch(e) {
@@ -203,13 +220,25 @@ class Write extends Component {
   // 提交数据
   submitArticle() {
     const { dispatch } = this.props;
-    dispatch(saveArticleAction({
-      title: this.state.title,
-      content: this.state.md,
-      tags: this.state.choosenTags,
-      categoryId: this.state.categoryId,
-      categoryName: this.state.categoryName
-    }));
+    // 更新文章
+    if (this.state.articleId) {
+      dispatch(updateArticleAction({
+        articleId: this.state.articleId,
+        title: this.state.title,
+        content: this.state.md,
+        tags: this.state.choosenTags,
+        categoryId: this.state.categoryId,
+        categoryName: this.state.categoryName
+      }));
+    } else { // 创建文章
+      dispatch(saveArticleAction({
+        title: this.state.title,
+        content: this.state.md,
+        tags: this.state.choosenTags,
+        categoryId: this.state.categoryId,
+        categoryName: this.state.categoryName
+      }));
+    }
   }
   // 生成markdown
   renderMD(md) {
@@ -279,7 +308,6 @@ class Write extends Component {
       </Tag>
       )
     );
-    // console.log(category);
     let selectDom = [<Option key="disabled" value="" disabled selected="selected">-请选择分类-</Option>];
     if (isArray(category)) {
       selectDom = selectDom.concat(category.map(item =>
@@ -352,7 +380,7 @@ class Write extends Component {
           </Col>
         </Row>
         <Row style={{ marginTop: 10, height: textAreaHeight }}>
-          <Col xs={24} sm={12} style={{ height: '100%' }}>
+          <Col xs={24} sm={10} style={{ height: '100%' }}>
             <textarea
               id="textarea-editor"
               className="textarea-editor"
@@ -360,11 +388,67 @@ class Write extends Component {
               onChange={(e) => this.textAreaChangeHandler(e)}
             ></textarea>
           </Col>
-          <Col xs={0} sm={12} style={{ height: '100%' }}>
+          <Col xs={0} sm={10} style={{ height: '100%' }}>
             <div className="editor-container">
               <div id="editormd">
               </div>
             </div>
+          </Col>
+          <Col sm={4} style={{ height: '100%' }}>
+            <Col xs={{ span: 22, offset: 2 }}>
+              <FormItem style={{ marginBottom: 8 }}>
+                <Input
+                  placeholder="请输入文章标题"
+                  style={{ width: '100%' }}
+                  value={this.state.title}
+                  onChange={(e) => this.onTitleChange(e)}
+                />
+              </FormItem>
+            </Col>
+            <Col xs={{ span: 22, offset: 2 }}>
+              <FormItem style={{ marginBottom: 8 }}>
+                <Select
+                  style={{ width: '100%' }}
+                  defaultValue=""
+                  value={this.state.categoryId}
+                  onChange={(value) => this.onCategoryChange(value)}
+                >
+                  {selectDom}
+                </Select>
+              </FormItem>
+            </Col>
+            <Col xs={{ span: 22, offset: 2 }}>
+              <div className="tags-container" style={{ marginBottom: 8 }}>
+                {TagsDom}
+                <Input
+                  placeholder="请输入标签"
+                  className="tag-input"
+                  onKeyPress={(e) => this.tagInputKeyPress(e)}
+                  ref={(ref) => { this.tagInput = ref; }}
+                />
+                <div
+                  className="ant-select-dropdown dropdown-write-tags"
+                  style={{ display: this.state.searchTagShow ? 'block' : 'none' }}
+                >
+                  <ul className="ant-select-dropdown-menu write-tags">
+                    {dropdownDom}
+                    <li
+                      style={{
+                        display: (searchTagsArr.length > 0) ? 'none' : 'inline-block'
+                      }}
+                      key="createTag"
+                      className="ant-select-dropdown-menu-item"
+                      onClick={() => this.createTag()}
+                    >
+                      创建该标签
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </Col>
+            <Col xs={{ span: 22, offset: 2 }} style={{ marginBottom: 8 }}>
+              <UploadFile getUpImgList={(imgArr) => this.getUpImgList(imgArr)} />
+            </Col>
           </Col>
         </Row>
         <Button
@@ -387,7 +471,8 @@ function mapToState(state) {
     addTags: state.tags.addTags,
     category: state.navBar.category,
     saveArticle: state.article.saveArticle, // 保存文章的返回值
-    articleDetail: state.article.articleDetail
+    articleDetail: state.article.articleDetail, // 获取文章详情
+    updateArticle: state.article.updateArticle // 更新文章
   };
 }
 Write.propTypes = {
@@ -403,6 +488,7 @@ Write.propTypes = {
   ]),
   saveArticle: PropTypes.object,
   location: PropTypes.object,
-  articleDetail: PropTypes.object
+  articleDetail: PropTypes.object,
+  updateArticle: PropTypes.object
 };
 export default connect(mapToState)(Write);

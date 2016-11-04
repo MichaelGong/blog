@@ -84,6 +84,10 @@ class Article extends Component {
     const { dispatch } = this.props;
     dispatch(deleteArticleByIdAction(this.state.selectedRows.map(item => item[id])));
   }
+  // 是否显示
+  isShow(text) {
+    return text ? '是' : '否';
+  }
   render() {
     let me = this;
     let id = '_id';
@@ -97,6 +101,11 @@ class Article extends Component {
       dataIndex: 'categoryId',
       key: 'categoryId',
       render: text => this.getCategoryName(text)
+    }, {
+      title: '是否显示',
+      dataIndex: 'isShow',
+      key: 'isShow',
+      render: text => this.isShow(text)
     }, {
       title: '创建时间',
       dataIndex: 'createTime',

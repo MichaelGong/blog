@@ -103,7 +103,7 @@ router.get('/getById', function(req, res) {
     });
   });
 });
-
+// 删除文章
 router.post('/delete', function(req, res) {
   if (!req.body.idArr) {
     errorCheck(res, '请传入文章id');
@@ -116,6 +116,52 @@ router.post('/delete', function(req, res) {
   });
 
   Article.delete(req.body.idArr, function(err) {
+    if (err) {
+      res.json({
+        code: 400,
+        message: err.message,
+        data: err
+      });
+      return;
+    }
+    res.json({
+      code: 200,
+      data: {}
+    });
+  });
+});
+
+// 更新文章
+router.post('/update', function(req, res) {
+  let article;
+  let timeStamp;
+  if (!req.body.articleId || !objectId.isValid(req.body.articleId)) {
+    errorCheck(res, '请传入合法的文章id');
+    return;
+  } else if (!req.body.title) {
+    errorCheck(res, '文章标题不能为空！');
+    return;
+  } else if (!req.body.content) {
+    errorCheck(res, '文章内容不能为空！');
+    return;
+  } else if (!req.body.tags || req.body.tags.length === 0) {
+    errorCheck(res, '请至少添加一个标签！');
+    return;
+  } else if (!req.body.categoryId) {
+    errorCheck(res, '请选择一个分类！');
+    return;
+  }
+  timeStamp = new Date().getTime();
+  article = new Article({
+    title: req.body.title,
+    content: req.body.content,
+    img: req.body.img,
+    tags: req.body.tags,
+    updateTime: timeStamp,
+    categoryId: req.body.categoryId,
+    categoryName: req.body.categoryName
+  });
+  article.update(req.body.articleId, function(err) {
     if (err) {
       res.json({
         code: 400,

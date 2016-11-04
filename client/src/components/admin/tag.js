@@ -22,6 +22,9 @@ class Tag extends Component {
     const { dispatch } = this.props;
     dispatch(tags());
   }
+  shouldComponentUpdate(nextProps) {
+    return this.props.tagsData !== nextProps.tagsData;
+  }
   render() {
     const id = '_id';
     const { tagsData } = this.props;

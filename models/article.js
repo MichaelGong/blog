@@ -3,7 +3,6 @@ var objectId = require('mongodb').ObjectId;
 var collectionName = 'article';
 
 function Article(article) {
-  console.log(article);
   this.title = article.title;
   this.content = article.content;
   this.img = article.img;
@@ -80,9 +79,21 @@ Article.delete = function(idArr, cb) {
 };
 // 更新文章
 Article.prototype.update = function(id, cb) {
+  let self = this;
+  let article = {
+    title: self.title,
+    content: self.content,
+    img: self.img,
+    tags: self.tags,
+    updateTime: self.updateTime,
+    categoryId: self.categoryId,
+    categoryName: self.categoryName
+  };
   dbUtil(collectionName).then((obj) => {
-    obj.collection.update({
+    obj.collection.findOneAndUpdate({
       _id: objectId(id)
+    }, {
+      $set: article
     }).then(() => {
       obj.db.close();
       cb(null);
