@@ -100,7 +100,7 @@ class UploadFile extends Component {
           onClick={() => this.toggleModal()}
         >
           <Icon type="upload" />
-          <span style={{ fontSize: 12 }}>添加图片</span>
+          <span style={{ fontSize: 12 }}>{this.props.text || '添加图片'}</span>
         </Button>
         <Modal
           title="添加图片"
@@ -148,6 +148,7 @@ function mapToState(state) {
 UploadFile.propTypes = {
   dispatch: PropTypes.func,
   uptoken: PropTypes.string,
-  getUpImgList: PropTypes.func.isRequired
+  getUpImgList: PropTypes.func.isRequired,
+  text: PropTypes.string
 };
 export default connect(mapToState)(UploadFile);

@@ -4,7 +4,7 @@ import {
   LinkedStateMixin
 } from 'react-addons';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { Form, Input, Row, Col, Select, Tag, message, Button } from 'antd';
+import { Form, Input, Row, Col, Select, Tag, message, Button, Icon } from 'antd';
 import UploadFile from './uploadFile';
 import { random, closest, isArray } from '../../../util';
 import {
@@ -396,58 +396,13 @@ class Write extends Component {
           </Col>
           <Col sm={4} style={{ height: '100%' }}>
             <Col xs={{ span: 22, offset: 2 }}>
-              <FormItem style={{ marginBottom: 8 }}>
-                <Input
-                  placeholder="请输入文章标题"
-                  style={{ width: '100%' }}
-                  value={this.state.title}
-                  onChange={(e) => this.onTitleChange(e)}
-                />
-              </FormItem>
-            </Col>
-            <Col xs={{ span: 22, offset: 2 }}>
-              <FormItem style={{ marginBottom: 8 }}>
-                <Select
-                  style={{ width: '100%' }}
-                  defaultValue=""
-                  value={this.state.categoryId}
-                  onChange={(value) => this.onCategoryChange(value)}
-                >
-                  {selectDom}
-                </Select>
-              </FormItem>
-            </Col>
-            <Col xs={{ span: 22, offset: 2 }}>
-              <div className="tags-container" style={{ marginBottom: 8 }}>
-                {TagsDom}
-                <Input
-                  placeholder="请输入标签"
-                  className="tag-input"
-                  onKeyPress={(e) => this.tagInputKeyPress(e)}
-                  ref={(ref) => { this.tagInput = ref; }}
-                />
-                <div
-                  className="ant-select-dropdown dropdown-write-tags"
-                  style={{ display: this.state.searchTagShow ? 'block' : 'none' }}
-                >
-                  <ul className="ant-select-dropdown-menu write-tags">
-                    {dropdownDom}
-                    <li
-                      style={{
-                        display: (searchTagsArr.length > 0) ? 'none' : 'inline-block'
-                      }}
-                      key="createTag"
-                      className="ant-select-dropdown-menu-item"
-                      onClick={() => this.createTag()}
-                    >
-                      创建该标签
-                    </li>
-                  </ul>
-                </div>
+              <UploadFile
+                text="上传封面图片"
+                getUpImgList={(imgArr) => this.getUpImgList(imgArr)}
+              />
+              <div style={{ marginTop: 8 }}>
+                是否显示：
               </div>
-            </Col>
-            <Col xs={{ span: 22, offset: 2 }} style={{ marginBottom: 8 }}>
-              <UploadFile getUpImgList={(imgArr) => this.getUpImgList(imgArr)} />
             </Col>
           </Col>
         </Row>
