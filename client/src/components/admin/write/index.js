@@ -4,7 +4,7 @@ import {
   LinkedStateMixin
 } from 'react-addons';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { Form, Input, Row, Col, Select, Tag, message, Button, Icon } from 'antd';
+import { Form, Input, Row, Col, Select, Tag, message, Button, Radio } from 'antd';
 import UploadFile from './uploadFile';
 import { random, closest, isArray } from '../../../util';
 import {
@@ -41,7 +41,9 @@ class Write extends Component {
       md: '',
       choosenTags: [],
       searchTagShow: false,
-      createTagShow: false
+      createTagShow: false,
+      coverImg: '', // 封面图片
+      isShow: 1 // '是否显示'
     };
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
     this.linkState = LinkedStateMixin.linkState.bind(this);
@@ -128,7 +130,9 @@ class Write extends Component {
         _id: articleDetail.categoryId,
         name: articleDetail.categoryName
       },
-      choosenTags: articleDetail.tags
+      choosenTags: articleDetail.tags,
+      coverImg: articleDetail.img,
+      isShow: articleDetail.isShow
     });
     this.renderMD(articleDetail.content);
   }
@@ -146,6 +150,18 @@ class Write extends Component {
       md: str
     });
     this.renderMD(str);
+  }
+  // 获取上传的封面图片列表
+  getUpImgCover(imgArr) {
+    this.setState({
+      coverImg: imgArr[0].url
+    });
+  }
+  // 设置是否显示
+  setIsShow(e) {
+    this.setState({
+      isShow: e.target.value
+    });
   }
   // 清空数据
   clearData() {
@@ -236,9 +252,17 @@ class Write extends Component {
         content: this.state.md,
         tags: this.state.choosenTags,
         categoryId: this.state.categoryId,
-        categoryName: this.state.categoryName
+        categoryName: this.state.categoryName,
+        img: this.state.coverImg,
+        isShow: this.state.isShow
       }));
     }
+  }
+  // 清空封面图片
+  clearCoverImg() {
+    this.setState({
+      coverImg: ''
+    });
   }
   // 生成markdown
   renderMD(md) {
@@ -308,7 +332,7 @@ class Write extends Component {
       </Tag>
       )
     );
-    let selectDom = [<Option key="disabled" value="" disabled selected="selected">-请选择分类-</Option>];
+    let selectDom = [];
     if (isArray(category)) {
       selectDom = selectDom.concat(category.map(item =>
         (
@@ -339,6 +363,7 @@ class Write extends Component {
               <Select
                 style={{ width: '100%' }}
                 defaultValue=""
+                placeholder="请选择分类"
                 value={this.state.categoryId}
                 onChange={(value) => this.onCategoryChange(value)}
               >
@@ -380,7 +405,7 @@ class Write extends Component {
           </Col>
         </Row>
         <Row style={{ marginTop: 10, height: textAreaHeight }}>
-          <Col xs={24} sm={10} style={{ height: '100%' }}>
+          <Col xs={24} md={10} style={{ height: '100%' }}>
             <textarea
               id="textarea-editor"
               className="textarea-editor"
@@ -388,33 +413,55 @@ class Write extends Component {
               onChange={(e) => this.textAreaChangeHandler(e)}
             ></textarea>
           </Col>
-          <Col xs={0} sm={10} style={{ height: '100%' }}>
+          <Col xs={0} md={10} style={{ height: '100%' }}>
             <div className="editor-container">
               <div id="editormd">
               </div>
             </div>
           </Col>
-          <Col sm={4} style={{ height: '100%' }}>
-            <Col xs={{ span: 22, offset: 2 }}>
+          <Col md={4} style={{ height: '100%' }}>
+            <Col sm={{ span: 24 }} md={{ span: 22, offset: 2 }}>
               <UploadFile
                 text="上传封面图片"
-                getUpImgList={(imgArr) => this.getUpImgList(imgArr)}
+                getUpImgList={(imgArr) => this.getUpImgCover(imgArr)}
               />
+              {this.state.coverImg ?
+                <div className="coverimg">
+                  <img
+                    src={this.state.coverImg}
+                    alt="只能有一张封面"
+                    title="点击删除"
+                    className="coverimg-img"
+                    onClick={() => this.clearCoverImg()}
+                  />
+                </div>
+                : ''
+              }
               <div style={{ marginTop: 8 }}>
                 是否显示：
+                <Radio.Group
+                  defaultValue="1"
+                  size="large"
+                  onChange={(e) => this.setIsShow(e)}
+                >
+                  <Radio.Button value="1">显示</Radio.Button>
+                  <Radio.Button value="0">不显示</Radio.Button>
+                </Radio.Group>
               </div>
             </Col>
           </Col>
         </Row>
-        <Button
-          type="primary"
-          size="large"
-          loading={this.state.iconLoading}
-          onClick={() => this.submitArticle()}
-          style={{ float: 'right', marginTop: 15 }}
-        >
-          保存提交
-        </Button>
+        <Col sm={24} md={20}>
+          <Button
+            type="primary"
+            size="large"
+            loading={this.state.iconLoading}
+            onClick={() => this.submitArticle()}
+            style={{ float: 'right', marginTop: 15 }}
+          >
+            保存提交
+          </Button>
+        </Col>
       </div>
     );
   }

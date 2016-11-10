@@ -86,7 +86,7 @@ class Article extends Component {
   }
   // 是否显示
   isShow(text) {
-    return text ? '是' : '否';
+    return +text === 1 ? '是' : '否';
   }
   render() {
     let me = this;

@@ -13,6 +13,7 @@ function Article(article) {
   this.commentNum = article.commentNum;
   this.categoryId = article.categoryId;
   this.categoryName = article.categoryName;
+  this.isShow = article.isShow;
 }
 // 获取所有文章
 Article.getAll = function(categoryid, tagid, cb) {
@@ -87,7 +88,8 @@ Article.prototype.update = function(id, cb) {
     tags: self.tags,
     updateTime: self.updateTime,
     categoryId: self.categoryId,
-    categoryName: self.categoryName
+    categoryName: self.categoryName,
+    isShow: self.isShow
   };
   dbUtil(collectionName).then((obj) => {
     obj.collection.findOneAndUpdate({
@@ -113,7 +115,8 @@ Article.prototype.add = function(cb) {
     readNum: self.readNum,
     commentNum: self.commentNum,
     categoryId: self.categoryId,
-    categoryName: self.categoryName
+    categoryName: self.categoryName,
+    isShow: self.isShow
   };
   dbUtil(collectionName).then((obj) => {
     obj.collection.insert(article).

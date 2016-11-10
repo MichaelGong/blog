@@ -63,7 +63,8 @@ router.post('/add', function(req, res) {
     readNum: 0,
     commentNum: 0,
     categoryId: req.body.categoryId,
-    categoryName: req.body.categoryName
+    categoryName: req.body.categoryName,
+    isShow: req.body.isShow
   });
   article.add(function(err) {
     if (err) {

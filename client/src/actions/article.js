@@ -61,7 +61,9 @@ export function saveArticleAction(data) {
       content: data.content,
       tags: data.tags,
       categoryId: data.categoryId,
-      categoryName: data.categoryName
+      categoryName: data.categoryName,
+      img: data.img,
+      isShow: data.isShow
     }).
     then(json => {
       dispatch({ type: 'SAVE_ARTICLE_SUCCESS', data: json });
